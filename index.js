@@ -51,7 +51,7 @@ app.use(passport.session());
 app.get('/', (req, res) => {
   db.getTotalNorrlands().then(cl => {
     const m = (cl/33*0.066).toFixed(2);
-    res.render('home', {user: req.user, distance: m});
+    res.render('home', {user: req.user, volume: cl, distance: m});
   })
 })
 
