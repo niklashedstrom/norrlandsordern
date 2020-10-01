@@ -1,6 +1,5 @@
 const express = require('express');
 const session = require('express-session');
-const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -107,7 +106,7 @@ app.post('/norrlands', auth.autenticated, (req, res) => {
   }
 })
 
-const server = app.listen(process.env.PORT || 3000, () => {
+const server = app.listen(process.env.PORT || 5000, () => {
   const host = server.address().address
   const port = server.address().port
   console.log("Example app listening at http://%s:%s", host, port)
