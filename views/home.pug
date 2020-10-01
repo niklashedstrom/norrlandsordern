@@ -1,0 +1,21 @@
+extends layout.pug
+
+block content
+  .text-center
+    p.mb-0 Välkommen till
+    h1 Norrlandsordern
+
+    .mt-4
+    if user
+      a(href='/me')
+        button.btn.btn-primary.btn-lg.btn-block= user.name
+    else
+      a(href='/login')
+        button.btn.btn-primary.btn-lg.btn-block Logga in
+      a(href='/signup')
+        button.btn.btn-outline-secondary.btn-sm.btn-block Bli medlem
+
+    .mt-5
+      h3 Total distans
+      h1.display-4= distance
+      p meter

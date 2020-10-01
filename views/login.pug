@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  form(method='POST')
+    .form-group
+      label(for='username') Användarnamn
+      input(type='text', class='form-control', id='username', name='username', required)
+    .form-group
+      label(for='password') Lösenord
+      input(type='password', class='form-control', id='password', name='password', required)
+    button(type='submit', class='btn btn-primary') Logga in

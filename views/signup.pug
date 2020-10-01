@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  form(method='POST')
+    .form-group
+      label(for='secret') Signup-kod
+      input.form-control(required, class=wrongSecret ? 'is-invalid' : '', id='secret', name='secret', value=secret)
+      small.form-text.text-muted Om du inte vet vad detta innebär, prata med personen som bjöd in dig.
+      .invalid-feedback Signup-koden är fel
+    .form-group
+      label(for='name') Namn
+      input.form-control(required, id='name', name='name', value=name)
+    .form-group
+      label(for='username') Användarnamn
+      input.form-control(required, class=usernameExists ? 'is-invalid' : '', id='username', name='username', value=username)
+      .invalid-feedback Användarnamnet finns redan
+    .form-group
+      label(for='email') E-post
+      input.form-control(required, id='email', name='email', type='email', value=email)
+    .form-group
+      label(for='password') Lösenord
+      input.form-control(required, id='password', name='password', type='password', value=password)
+    .form-group
+      label(for='password_repeated' ) Upprepa lösenord
+      input.form-control(required, class=notSamePassword ? 'is-invalid' : '' id='password_repeated', name='password_repeated', type='password')
+      .invalid-feedback Lösenorden matchade inte
+    .form-group
+      .form-check
+        input.form-check-input(required, type='checkbox', id='beer', name='beer', placeholder=beer)
+        label.form-check-label(for='beer') Jag intygar att Norrlands guld är den godaste ölen och lovar att göra mitt bästa med att ta oss till Norrland.
+    button.btn.btn-primary Bli medlem

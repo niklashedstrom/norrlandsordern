@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h3= `#${user.id}: ${user.name} ${user.admin ? "(Admin)" : ""}`
+  p= user.username
+  p= user.email
+  p= `Hittills bidragit med: ${(norrlands.map(item => item.volume).reduce((a,b) => a+b, 0)/33).toFixed(0)} burkar vilket motsvarar ${(norrlands.map(item => item.volume).reduce((a,b) => a+b,0)/33*0.066).toFixed(2)} m`
+  form(action="/norrlands", method='POST')
+    .form-row.m-4
+      .col-4
+        label.sr-only(for='volume') Volym
+        select.form-control.form-control-lg(id='volume', name='volume')
+          option.selected(value='33') 33 cl
+          option(value='40') 40 cl
+          option(value='50') 50 cl
+      .col-8
+        button.btn.btn-lg.btn-primary.btn-block(type='submit') Mot Norrland!
+
+  table.table
+    thead
+      tr
+        th(scope='col') id
+        th(scope='col') volym (cl)
+        th(scope='col') tid
+    tbody
+      each item in norrlands
+        tr
+          th= item.id
+          th= item.volume
+          th= (new Date(item.created_at + " UTC")).toLocaleString('sv-SE')
+
