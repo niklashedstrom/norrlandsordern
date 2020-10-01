@@ -56,7 +56,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/me', auth.autenticated, (req, res) => {
-  console.log('GET /me')
   db.getNorrlands(req.user.id)
     .then(norrlands => {
       res.render('user', {user: req.user, norrlands: norrlands});
