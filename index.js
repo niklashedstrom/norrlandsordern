@@ -90,6 +90,7 @@ app.get('/login', (req, res) => {
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/me',
   failureRedirect: '/login',
+  failureFlash: true,
 }))
 
 app.get('/logout', (req, res) => {
