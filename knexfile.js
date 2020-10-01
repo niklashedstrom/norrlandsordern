@@ -10,10 +10,7 @@ module.exports = {
     useNullAsDefault: true,
   },
   production: {
-    client: 'sqlite3',
-    connection: {
-      filename: './db.sqlite3'
-    },
-    useNullAsDefault: true,
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
   },
 };
