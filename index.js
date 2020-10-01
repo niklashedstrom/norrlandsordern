@@ -84,7 +84,6 @@ app.post('/signup', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-  console.log('GET /login')
   res.render('login');
 })
 
