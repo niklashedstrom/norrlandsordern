@@ -51,11 +51,36 @@
 }
 
 .vision {
-  background-color: #CBA051;
+  background-color: #dcbf8a;
 }
 
 .approach {
   background-color: #0A243E;
+}
+
+#login-form {
+  max-width: 440px;
+}
+
+.card img {
+  display: block;
+  margin: 16px auto;
+  width: 50%;
+}
+
+#status {
+  -webkit-animation: cssAnimation 5s forwards;
+  animation: cssAnimation 5s forwards;
+}
+@keyframes cssAnimation {
+    0%   {opacity: 1;}
+    50%  {opacity: 1;}
+    100% {opacity: 0;}
+}
+@-webkit-keyframes cssAnimation {
+    0%   {opacity: 1;}
+    50%  {opacity: 1;}
+    100% {opacity: 0;}
 }
 
 @media screen and (min-width: 600px) {

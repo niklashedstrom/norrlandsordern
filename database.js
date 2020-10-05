@@ -16,12 +16,37 @@ exports.addUser = async (user) => {
   return false;
 }
 
-exports.getUser = async (id) => {
-  return (await knex('users').select('*').where({id: id}))[0];
+exports.updateUser = async (id, newData) => {
+  if (newData.password) {
+    const hash = await bcrypt.hash(newData.password, 10);
+    newData.hash = hash;
+    delete newData.password;
+  }
+  return knex('users').where({id: id}).update(newData);
+}
+
+exports.getUser = async (id, password) => {
+  const user = (await knex('users').select('*').where({id: id}))[0];
+  user.admin = Boolean(user.admin)
+  if (password) {
+    try {
+      await this.authenticateUser(user.username, password);
+      return user;
+    } catch (e) {
+      return undefined;
+    }
+  }
+  return user;
+}
+
+exports.getUserFromEmail = async (email) => {
+  const users = await knex('users').select('*').where({email: email});
+  return users.map(user => ({...user, admin: Boolean(user.admin)}))
 }
 
 exports.authenticateUser = async (username, password) => {
   const user = (await knex('users').select('*').where({username: username}))[0];
+  user.admin = Boolean(user.admin)
   if (user && await bcrypt.compare(password, user.hash))
     return user;
   else
@@ -35,16 +60,16 @@ exports.checkUsername = async (username) => {
 
 exports.addNorrlands = async (userId, volume) => {
   if (userId && volume) {
-    return await knex('norrlands').insert({
+    return (await knex('norrlands').insert({
       user_id: userId,
       volume: volume,
-    });
+    }));
   }
   return false;
 }
 
 exports.getNorrlands = async (userId) => {
-  return await knex('norrlands').where({user_id: userId}).orderBy('id', 'desc');
+  return (await knex('norrlands').where({user_id: userId}).orderBy('id', 'desc')).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}));
 }
 
 exports.deleteNorrlands = async (id) => {

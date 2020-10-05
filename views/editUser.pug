@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  nav.navbar.navbar-expand-lg.navbar-light.bg-light
+    a.navbar-brand(href=backUrl)= "< Norrlandsordern"
+  .card.m-4
+    .card-body
+      h5.card-title Uppdatera uppgifter
+      form(method='POST')
+        .form-group
+          label(for='username') Användarnamn
+          input#username.form-control(required, name='username', value=user.username, disabled)
+        .form-group
+          label(for='name') Namn
+          input#name.form-control(required, name='name', value=user.name)
+        .form-group
+          label(for='email') E-post
+          input#email.form-control(required, type='email', name='email', value=user.email)
+        if admin
+          .form-check
+            input#admin.form-check-input(type='checkbox', name='admin', value='admin', checked=Boolean(user.admin) disabled=user.username=='eilwihlander')
+            label.form-check-label(for='admin') Admin
+        hr
+        .form-group
+          label(for='new-password') Nytt lösenord
+          input#new-password.form-control(type='password', name='new-password')
+        .form-group
+          label(for='new_password_repeat') Upprepa
+          input#new-password-repeat.form-control(type='password', name='new-password-repeat')
+        hr
+        .row
+          .col-6
+            a(href=backUrl)
+              button.btn.btn-outline-dark.btn-block Avbryt
+          .col-6
+            button.btn.btn-dark.btn-block(type='submit') Uppdatera
+        if status
+          .alert.mt-4(class=`alert-${status.type}`)= status.message

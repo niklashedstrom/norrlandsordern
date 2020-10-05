@@ -13,6 +13,14 @@ exports.seed = function(knex) {
           admin: true,
           joined_at: '2020-09-13',
         },
+        {
+          username: 'emil',
+          hash: '1',
+          email: 'bla.bla@bla.bla',
+          name: 'Emil Emilsson',
+          admin: false,
+          joined_at: '2020-09-13'
+        }
       ]);
     });
 };

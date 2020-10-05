@@ -1,11 +1,19 @@
 extends layout
 
 block content
-  form(method='POST')
-    .form-group
-      label(for='username') Användarnamn
-      input(type='text', class='form-control', id='username', name='username', required)
-    .form-group
-      label(for='password') Lösenord
-      input(type='password', class='form-control', id='password', name='password', required)
-    button(type='submit', class='btn btn-primary') Logga in
+  .d-flex.justify-content-center
+    #login-form.card.m-4
+      img.card-img-top(src='/images/logo.svg', alt='Norrlandsordern logga')
+      .card-body
+        h5.card-title Logga in
+        form.mb-2(method='POST')
+          .form-group
+            label(for='username') Användarnamn
+            input(type='text', class='form-control', id='username', name='username', required)
+          .form-group
+            label(for='password') Lösenord
+            input(type='password', class='form-control', id='password', name='password', required)
+          button(type='submit', class='btn btn-primary') Logga in
+          if status == 'failed'
+            .alert.alert-danger.mt-4 Fel lösenord eller användarnamn
+        a(href='/forgot') Har du glömt ditt lösenord eller användarnamn?

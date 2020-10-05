@@ -1,0 +1,19 @@
+extends layout.pug
+
+block content
+  .d-flex.justify-content-center
+    #forgot.card.m-4
+      img.card-img-top(src='/images/logo.svg', alt='Norrlandsordern logga')
+      .card-body
+        if (!email)
+          h5.card-title Återställ lösenord
+          p.card-text Fyll i e-postadressen du använde vid registrering
+          form(method='POST')
+            .form-group
+              input.form-control(type='email', id='email', name='email', required)
+            button.btn.btn-primary(type='submit') Återställ lösenord
+        else
+          h5.card-title Färdigt
+          p.card-text= `Om det finns en användare med den angivna e-postadressen (${email}) har nya inloggningsuppgifter skickats dit.`
+          a(href='/login')
+            button.btn.btn-primary Logga in
