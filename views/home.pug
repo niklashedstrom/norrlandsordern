@@ -61,11 +61,11 @@ block content
         small.text-muted= " meter"
     .row
       .col-6.text-right
-        h5= format(percentage, 2)
+        h5= format(percentage*100, 2)
       .col-6
         small.text-muted= " %"
     .progress.mb-4
-      .progress-bar(role='progressbar', aria-valuenow=percentage, aria-valuemin=0, aria-volumemax=100)
+      .progress-bar(role='progressbar', aria-valuenow=percentage, aria-valuemin=0, aria-volumemax=1)
     #map-status.mb-4
   .vision.p-4
     p.subheader.blue Vision
