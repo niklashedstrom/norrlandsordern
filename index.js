@@ -15,6 +15,27 @@ const auth = {
   }
 }
 
+const getPercentage = (dist) => {
+  const totalDist = 540811.52;
+  return dist/totalDist;
+}
+
+const getPosition = (dist) => {
+  const startPos = [55.710783, 13.210120];
+  const endPos = [60.201391, 16.739080];
+  const percentage = getPercentage(dist);
+  const lat = startPos[0] + percentage*(endPos[0]-startPos[0]);
+  const lon = startPos[1] + percentage*(endPos[1]-startPos[1]);
+  return {lat, lon};
+}
+
+const format = (number, decimals) => {
+  if (decimals == 0)
+    return (number).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$& ').slice(0,-3)
+  else
+    return (number).toFixed(decimals).replace(/\d(?=(\d{3})+\.)/g, '$& ')
+}
+
 passport.use(new LocalStrategy((username, password, done) => {
   if (!username || !password)
     return done(null, false, {message: 'Missing username or password'})
@@ -51,7 +72,7 @@ app.use(passport.session());
 app.get('/', (req, res) => {
   db.getTotalNorrlands().then(cl => {
     const m = (cl/33*0.066).toFixed(2);
-    res.render('home', {user: req.user, volume: cl, distance: m});
+    res.render('home', {user: req.user, volume: cl, distance: m, percentage: getPercentage(m), ...getPosition(m), format: format});
   })
 })
 

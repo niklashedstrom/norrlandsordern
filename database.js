@@ -52,5 +52,6 @@ exports.deleteNorrlands = async (id) => {
 }
 
 exports.getTotalNorrlands = async () => {
-  return (await knex('norrlands').sum('volume as total'))[0].total+4686; //4686 cl var första kvällen, när allt startade.
+  const response = await knex('norrlands').sum('volume as total');
+  return response[0].total+4686; //4686 cl var första kvällen, när allt startade.
 }

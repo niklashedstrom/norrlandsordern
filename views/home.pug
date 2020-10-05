@@ -1,21 +1,97 @@
 extends layout.pug
 
-block content
-  .text-center
-    p.mb-0 Välkommen till
-    h1 Norrlandsordern
 
-    .mt-4
+block extrameta
+  link(
+    rel='stylesheet',
+    href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css',
+    integrity='sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==',
+    crossorigin='')
+  script(
+    src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js',
+    integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==',
+    crossorigin='')
+
+block content
+  .header
+    .background
+      img.logo(src='/images/logo.svg', alt='Norrlandsordern logga')
+    .banner
+  .signin.p-4.pb-5.text-center
     if user
+      h6.white.text-muted Inloggad som
+      h3.white= user.name
       a(href='/me')
-        button.btn.btn-primary.btn-lg.btn-block= user.name
+        button.btn.btn-light.btn-lg.btn-block.mb-2 Logga öl!
+      a(href='/logout')
+        button.btn.btn-outline-light.btn-sm.btn-block Logga ut
     else
-      a(href='/login')
-        button.btn.btn-primary.btn-lg.btn-block Logga in
+      a.mb-1(href='/login')
+        button.btn.btn-light.btn-lg.btn-block.mb-2 Logga in
       a(href='/signup')
         button.btn.btn-outline-secondary.btn-sm.btn-block Bli medlem
+  .status.p-4
+    p.subheader Status
+    h4.red Hur långt har vi kommit?
+    p Mängden norrlands som druckits kommer nedan i alla möjliga olika former.
+    .row
+      .col-6.text-right
+        h5= format(volume/100, 1)
+      .col-6
+        small.text-muted= " liter"
+    .row
+      .col-6.text-right
+        h5= format(volume/33, 0)
+      .col-6
+        small.text-muted= " burkar"
+    .row
+      .col-6.text-right
+        h5= format(volume/33/24, 0)
+      .col-6
+        small.text-muted= " flak"
+    .row
+      .col-6.text-right
+        h5= format(volume/33/24/3*234.69, 2)
+      .col-6
+        small.text-muted= " kr"
+    .row
+      .col-6.text-right
+        h5= format(volume/33*0.066, 2)
+      .col-6
+        small.text-muted= " meter"
+    .row
+      .col-6.text-right
+        h5= format(percentage, 2)
+      .col-6
+        small.text-muted= " %"
+    .progress.mb-4
+      .progress-bar(role='progressbar', aria-valuenow=percentage, aria-valuemin=0, aria-volumemax=100)
+    #map-status.mb-4
+  .vision.p-4
+    p.subheader.blue Vision
+    h4.red Varför Norrlandsordern?
+    p.blue.
+      Många studenter har genom åren blivit beresta bland urvalet av fulöl som finns
+      tillgänglig att införskaffa från landet söderut som gjort öldrickandet till en
+      sport. Fulölet har varit en katalysator för studenters engagemang och socialisering
+      och har skapat oräknerligt antal relationer som kommer vara för evigt. Norrlandsordern
+      är en hyllning till en av dessa fulöl - Norrlands Guld. Den hyllas genom en rörelse
+      som annamar studentandan med allt från sångböcker till storslagna mål och siktar
+      mot stjärnorna uppe i norr. Vi ska dricka oss till Norrlands!
+  .approach.p-4
+    p.subheader.white Angrepssätt
+    h4.red Hur bidrar man?
+    p.white.
+      Målet är att dricka så många Norrlands guld att hade man ställt dem upp bredvid varandra
+      kommer man från E-huset, Lund till nedersta gränsen av Norrland. Avståndet är 540 811,52 meter,
+      vilket motsvarar 8 194 114 burkar. Det är lätt att bli avskräckt av ett så stort tal men kom
+      alltid ihåg att studenter har en förmåga att klara av de mest otroliga sakerna och vi kommer
+      komma ut som vinnare även här. Mot Norrland, en burk i taget!
 
-    .mt-5
-      h3= `Totalt: ${volume} cl vilket är`
-      h1.display-4= distance
-      p meter
+block scripts
+  script(type='text/javascript').
+    const map = L.map('map-status').setView([#{lat}, #{lon}], 14);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    L.marker([#{lat}, #{lon}]).addTo(map);
