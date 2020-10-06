@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const helmet = require('helmet');
+const crypto = require('crypto');
 const passwordGen = require('generate-password');
 const LocalStrategy = require('passport-local').Strategy;
 const db = require('./database');
@@ -94,6 +96,13 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString('hex');
+  next();
+})
+app.use(helmet({
+  contentSecurityPolicy: false,
+}));
 
 app.get('/', (req, res) => {
   db.getTotalNorrlands().then(cl => {
