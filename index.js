@@ -105,14 +105,18 @@ app.use(helmet({
 }));
 
 app.get('/', (req, res) => {
-  db.getTotalNorrlands().then(cl => {
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10)]).then(values => {
+    const [cl, latestNorrlands] = values;
     const m = (cl/33*0.066).toFixed(2);
     res.render('home', {
       user: req.user,
       volume: cl,
+      latestNorrlands: latestNorrlands.map(n => ({...n, diff: (new Date()) - n.created_at})),
       percentage: getPercentage(m),
       ...getPosition(m),
-      format: formatNumber,
+      formatNumber: formatNumber,
+      formatDate: formatDate,
+      formatDateDiff: formatDateDiff,
     });
   })
 })
@@ -235,7 +239,7 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/me',
+  successRedirect: '/',
   failureRedirect: '/login?status=failed',
 }))
 

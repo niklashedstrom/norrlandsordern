@@ -36,37 +36,51 @@ block content
     p Mängden norrlands som druckits kommer nedan i alla möjliga olika former.
     .row
       .col-6.text-right
-        h5= format(volume/100, 1)
+        h5= formatNumber(volume/100, 1)
       .col-6
         small.text-muted= " liter"
     .row
       .col-6.text-right
-        h5= format(volume/33, 0)
+        h5= formatNumber(volume/33, 0)
       .col-6
         small.text-muted= " burkar"
     .row
       .col-6.text-right
-        h5= format(volume/33/24, 0)
+        h5= formatNumber(volume/33/24, 0)
       .col-6
         small.text-muted= " flak"
     .row
       .col-6.text-right
-        h5= format(volume/33/24/3*234.69, 2)
+        h5= formatNumber(volume/33/24/3*234.69, 2)
       .col-6
         small.text-muted= " kr"
     .row
       .col-6.text-right
-        h5= format(volume/33*0.066, 2)
+        h5= formatNumber(volume/33*0.066, 2)
       .col-6
         small.text-muted= " meter"
     .row
       .col-6.text-right
-        h5= format(percentage*100, 2)
+        h5= formatNumber(percentage*100, 2)
       .col-6
         small.text-muted= " %"
     .progress.mb-4
       .progress-bar(role='progressbar', aria-valuenow=percentage, aria-valuemin=0, aria-volumemax=1)
     #map-status.mb-4
+  if user
+    #latest.p-4
+      p.subheader Dumheter
+      h4.red Senaste loggade ölen
+      table.borderless.table.m-0
+        thead
+          tr
+            th(scope='col') Namn
+            th(scope='col') Tid
+        tbody
+          each item in latestNorrlands
+            tr
+              td= item.name
+              td= formatDate(item.created_at)
   .vision.p-4
     p.subheader.blue Vision
     h4.red Varför Norrlandsordern?

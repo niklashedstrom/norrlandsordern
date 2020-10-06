@@ -76,6 +76,11 @@ exports.deleteNorrlands = async (id) => {
   return await knex('norrlands').where({id: id}).del();
 }
 
+exports.getLatestNorrlands = async (limit) => {
+  const respons = await knex('norrlands').select('*').orderBy('created_at', 'desc').limit(limit).leftJoin('users', 'users.id', 'norrlands.user_id');
+  return respons.map(r => ({...r, created_at: new Date(r.created_at + " UTC")}));
+}
+
 exports.getTotalNorrlands = async () => {
   //const response = await knex('norrlands').sum('volume as total');
   const response = await knex('norrlands').select('volume')
