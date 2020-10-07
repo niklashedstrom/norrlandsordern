@@ -105,6 +105,7 @@ app.use(helmet({
 }));
 
 app.get('/', (req, res) => {
+  console.log('GET /')
   Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(10)]).then(values => {
     const [cl, latestNorrlands, toplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
