@@ -39,6 +39,11 @@ exports.getUser = async (id, password) => {
   return user;
 }
 
+exports.getToplist = async (limit) => {
+  const response = await knex('norrlands').select('name', knex.raw('SUM(volume) as volume_sum')).groupBy('user_id').orderBy('volume_sum', 'desc').limit(limit).leftJoin('users','norrlands.user_id','users.id');
+  return response;
+}
+
 exports.getUserFromEmail = async (email) => {
   const users = await knex('users').select('*').where({email: email});
   return users.map(user => ({...user, admin: Boolean(user.admin)}))
