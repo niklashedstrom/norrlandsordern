@@ -73,7 +73,7 @@ exports.addNorrlands = async (userId, volume) => {
     return (await knex('norrlands').insert({
       user_id: userId,
       volume: volume,
-    }));
+    }).returning('id'));
   }
   return false;
 }
