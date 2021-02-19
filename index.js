@@ -25,11 +25,12 @@ const getPercentage = (dist) => {
 }
 
 const getPosition = (dist) => {
+  const compensation = 1.008; // To handle offset due to lonitude not being linear. Should be changed continuously.
   const startPos = [55.710783, 13.210120];
   const endPos = [60.201391, 16.739080];
   const percentage = getPercentage(dist);
   const lat = startPos[0] + percentage*(endPos[0]-startPos[0]);
-  const lon = startPos[1] + percentage*(endPos[1]-startPos[1]);
+  const lon = startPos[1] + percentage**compensation*(endPos[1]-startPos[1]);
   return {lat, lon};
 }
 
@@ -96,10 +97,6 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use((req, res, next) => {
-  res.locals.cspNonce = crypto.randomBytes(16).toString('hex');
-  next();
-})
 app.use(helmet({
   contentSecurityPolicy: false,
 }));
@@ -119,6 +116,7 @@ app.get('/', (req, res) => {
       formatNumber: formatNumber,
       formatDate: formatDate,
       formatDateDiff: formatDateDiff,
+      version: '2.03'
     });
   })
 })
@@ -248,6 +246,58 @@ app.post('/login', passport.authenticate('local', {
 app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
+})
+
+app.get('/norrlands', auth.autenticated, (req, res) => {
+  if (!req.user.admin) return res.sendStatus(401);
+
+  db.getAllNorrlands().then((norrlands) => {
+    res.render('norrlandsList', {
+      norrlands: norrlands.map(n => ({...n, link: `/norrlands/${n.id}`})),
+      formatDate: formatDate,
+    })
+  })
+})
+
+app.get('/norrlands/:id', auth.autenticated, (req, res) => {
+  if (!req.user.admin) return res.sendStatus(401);
+  db.getNorrlandsById(req.params.id).then(norrlands => {
+    res.render('editNorrlands', {
+      norrlands: norrlands,
+      backUrl: backUrl(req.url),
+      formatDate: formatDate,
+    })
+  })
+})
+
+app.post('/norrlands/:id', auth.autenticated, (req, res) => {
+  if (!req.user.admin) return res.sendStatus(401);
+  if (Date.parse(req.body.created_at) == NaN)
+    return res.render('editNorrlands', {
+      norrlands: req.body,
+      backUrl: backUrl(req.url),
+      status: {
+        type: 'warning',
+        message: 'Datumet är felformaterat',
+      },
+    })
+  db.updateNorrlands(req.params.id, {
+    volume: req.body.volume,
+    created_at: req.body.created_at,
+  }).then(() => {
+    db.getNorrlandsById(req.params.id).then(norrlands => {
+      res.render('editNorrlands', {
+        norrlands: norrlands,
+        backUrl: backUrl(req.url),
+        formatDate: formatDate,
+        status: {
+          type: 'success',
+          message: 'Uppdateringen lyckad!',
+        },
+      })
+    })
+  })
+
 })
 
 app.post('/norrlands', auth.autenticated, (req, res) => {
