@@ -117,7 +117,7 @@ app.get('/', (req, res) => {
       formatNumber: formatNumber,
       formatDate: formatDate,
       formatDateDiff: formatDateDiff,
-      version: '2.04'
+      version: '2.05'
     });
   })
 })
