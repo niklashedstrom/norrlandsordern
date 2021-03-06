@@ -44,6 +44,7 @@ const formatNumber = (number, decimals) => {
 }
 
 const formatDate = (date) => {
+  date = new Date(date.toLocaleString('en-US', {timeZone: 'Europe/Stockholm'}))
   const pad = (number) => ('000' + number).slice(-2)
   const year = date.getFullYear()
   const month = pad(date.getMonth() + 1);
@@ -116,7 +117,7 @@ app.get('/', (req, res) => {
       formatNumber: formatNumber,
       formatDate: formatDate,
       formatDateDiff: formatDateDiff,
-      version: '2.03'
+      version: '2.04'
     });
   })
 })
