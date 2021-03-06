@@ -85,11 +85,13 @@ block content
       table.borderless.table.m-0
         thead
           tr
+            th(scope='col')
             th(scope='col') Namn
             th(scope='col') Distans (m)
         tbody
           each item in toplist
             tr
+              td= item.index
               td= item.name
               td= formatNumber(item.volume_sum/33*0.066, 2)
   .vision.p-4

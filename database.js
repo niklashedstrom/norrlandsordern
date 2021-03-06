@@ -46,7 +46,7 @@ exports.getToplist = async (limit) => {
     .leftJoin('users','t.user_id','users.id')
     .orderBy('volume_sum', 'desc')
     .limit(limit)
-  return response;
+  return response.map((p, i) => ({...p, index: i +1}));
 }
 
 exports.getUserFromEmail = async (email) => {
@@ -80,6 +80,18 @@ exports.addNorrlands = async (userId, volume) => {
 
 exports.getNorrlands = async (userId) => {
   return (await knex('norrlands').where({user_id: userId}).orderBy('id', 'desc')).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}));
+}
+
+exports.updateNorrlands = async (id, data) => {
+  return knex('norrlands').where({id:id}).update(data);
+}
+
+exports.getNorrlandsById = async (id) => {
+  return (await knex('norrlands').where({id: id})).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}))[0];
+}
+
+exports.getAllNorrlands = async () => {
+  return (await knex('norrlands').orderBy('id', 'desc')).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}));
 }
 
 exports.deleteNorrlands = async (id) => {

@@ -103,8 +103,7 @@ app.use(helmet({
 }));
 
 app.get('/', (req, res) => {
-  console.log('GET /')
-  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(10)]).then(values => {
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(20)]).then(values => {
     const [cl, latestNorrlands, toplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
     res.render('home', {
@@ -117,7 +116,7 @@ app.get('/', (req, res) => {
       formatNumber: formatNumber,
       formatDate: formatDate,
       formatDateDiff: formatDateDiff,
-      version: '2.05'
+      version: '2.06'
     });
   })
 })
