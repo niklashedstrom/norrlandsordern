@@ -11,6 +11,11 @@ block extrameta
     src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js',
     integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==',
     crossorigin='')
+  link(
+    rel='stylesheet',
+    href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css')
+  script(
+    src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js')
 
 block content
   .header
@@ -119,12 +124,23 @@ block content
 
 block scripts
   script(type='text/javascript').
-    const map = L.map('map-status').setView([#{lat}, #{lon}], 14);
+    const map = L.map('map-status', {
+      fullscreenControl: true
+    }).setView([#{lat}, #{lon}], 14);
     L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-    L.polygon([
-      [55.710783, 13.210120],
-      [60.201391, 16.739080],
-    ]).addTo(map)
-    L.marker([#{lat}, #{lon}]).addTo(map);
+    L.polyline([[#{lat}, #{lon}], [60.201391, 16.739080]], {
+      color: '#BE162F',
+      dashArray: '10, 10'
+    }).addTo(map);
+    L.polyline([[55.710783, 13.210120], [#{lat}, #{lon}]], {
+      color: '#0A243E'
+    }).addTo(map);
+    L.marker([#{lat}, #{lon}], {
+      icon: L.icon({ 
+        iconUrl: '/images/marker.svg',
+        iconSize: [82, 54],
+        iconAnchor: [41, 54]
+      }),
+    }).addTo(map);

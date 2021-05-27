@@ -42,7 +42,7 @@
 
 #map-status {
   width: 100%;
-  height: 200px;
+  height: 250px;
 }
 
 .signin {
@@ -90,5 +90,9 @@
 @media screen and (min-width: 600px) {
   .banner {
     background-size: 100%;
+  }
+
+  #map-status {
+    height: 400px;
   }
 }
