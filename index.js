@@ -9,6 +9,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const db = require('./database');
 const mailer = require('./mailer');
 
+const VERSION = '2.07';
+
 const auth = {
   autenticated: (req, res, next) => {
     if (req.user) {
@@ -116,7 +118,7 @@ app.get('/', (req, res) => {
       formatNumber: formatNumber,
       formatDate: formatDate,
       formatDateDiff: formatDateDiff,
-      version: '2.06'
+      version: VERSION
     });
   })
 })
@@ -334,8 +336,8 @@ app.post('/forgot', async (req, res) => {
   }
 })
 
-const server = app.listen(process.env.PORT || 5000, () => {
-  const host = server.address().address
-  const port = server.address().port
-  console.log("Example app listening at http://%s:%s", host, port)
+const port = process.env.PORT || 5000
+
+const server = app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
 })
