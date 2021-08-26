@@ -1,15 +1,14 @@
 const express = require('express');
 const session = require('express-session');
-const bodyParser = require('body-parser');
+const KnexSessionStore = require('connect-session-knex')(session);
 const passport = require('passport');
 const helmet = require('helmet');
-const crypto = require('crypto');
 const passwordGen = require('generate-password');
 const LocalStrategy = require('passport-local').Strategy;
 const db = require('./database');
 const mailer = require('./mailer');
 
-const VERSION = '2.07';
+const VERSION = require('./package.json').version;
 
 const auth = {
   autenticated: (req, res, next) => {
@@ -93,11 +92,15 @@ app.set('view engine', 'pug');
 
 app.use(express.static('public'));
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'cats', //TODO: Real secret
+  store: new KnexSessionStore({knex: db.knex}),
+  secret: process.env.SESSION_SECRET || 'cats',
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60,
+  },
   resave: false,
   saveUninitialized: true,
 }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(helmet({
@@ -118,7 +121,7 @@ app.get('/', (req, res) => {
       formatNumber: formatNumber,
       formatDate: formatDate,
       formatDateDiff: formatDateDiff,
-      version: VERSION
+      version: VERSION,
     });
   })
 })
