@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt')
 const knex_config = require('./knexfile');
 const knex = require('knex')(knex_config[process.env.NODE_ENV] || knex_config.development);
 
+exports.knex = knex;
+
 exports.addUser = async (user) => {
   if (['name', 'username', 'password', 'email'].every(prop => user[prop])) {
     const hash = await bcrypt.hash(user.password, 10)
