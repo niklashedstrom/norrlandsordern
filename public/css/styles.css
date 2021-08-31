@@ -11,9 +11,13 @@
   padding-top: 80px;
 }
 
+.restrict-width {
+  margin: 0 auto;
+  max-width: 600px;
+}
+
 .banner {
   background-image: url(/images/background.png);
-  background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 300px;
   width: 100%;
@@ -88,10 +92,6 @@
 }
 
 @media screen and (min-width: 600px) {
-  .banner {
-    background-size: 100%;
-  }
-
   #map-status {
     height: 400px;
   }
