@@ -94,9 +94,6 @@ app.use(express.static('public'));
 app.use(session({
   store: new KnexSessionStore({knex: db.knex}),
   secret: process.env.SESSION_SECRET || 'cats',
-  cookie: {
-    maxAge: 30 * 24 * 60 * 60,
-  },
   resave: false,
   saveUninitialized: true,
 }));
