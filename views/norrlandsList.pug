@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  nav.navbar.navbar-expand-lg.navbar-light.bg-light
+    a.navbar-brand(href=('/'))= "< Norrlandsordern"
+  .card.md-4.mb-5
+    h5.card-title.ml-4 Logg
+    p= `page=${page}, pageSize=${pageSize}`
+    table.table.m-0.log-table
+      thead
+        tr
+          th(scope='col') id
+          th(scope='col') volym (cl)
+          th(scope='col') tid
+          th(scope='col') redigera
+      tbody
+        each item in norrlands
+          tr
+            th= item.id
+            th= item.volume
+            th= formatDate(item.created_at)
+            th
+              a(href=item.link)
+                i.bi-pencil-square
+
+    .pagination
+      if prevPage
+        a(href=prevPage)
+          button.btn.btn-light.btn-sm Förra
+      a(href=nextPage)
+        button.btn.btn-light.btn-sm Nästa

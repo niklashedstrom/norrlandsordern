@@ -80,8 +80,10 @@ exports.addNorrlands = async (userId, volume) => {
   return false;
 }
 
+const resToNorrland = r => ({...r, created_at: new Date(r.created_at + " UTC")})
+
 exports.getNorrlands = async (userId) => {
-  return (await knex('norrlands').where({user_id: userId}).orderBy('id', 'desc')).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}));
+  return (await knex('norrlands').where({user_id: userId}).orderBy('id', 'desc')).map(resToNorrland);
 }
 
 exports.updateNorrlands = async (id, data) => {
@@ -89,11 +91,15 @@ exports.updateNorrlands = async (id, data) => {
 }
 
 exports.getNorrlandsById = async (id) => {
-  return (await knex('norrlands').where({id: id})).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}))[0];
+  return (await knex('norrlands').where({'norrlands.id': id}).join('users', 'users.id', '=', 'norrlands.user_id')).map(resToNorrland)[0];
 }
 
 exports.getAllNorrlands = async () => {
-  return (await knex('norrlands').orderBy('id', 'desc')).map(r => ({...r, created_at: new Date(r.created_at + " UTC")}));
+  return (await knex('norrlands').orderBy('id', 'desc')).map(resToNorrland);
+}
+
+exports.getNorrlandsPage = async (page, pageSize) => {
+  return (await knex('norrlands').orderBy('id', 'desc').offset(page*pageSize).limit(pageSize)).map(resToNorrland);
 }
 
 exports.deleteNorrlands = async (id) => {
