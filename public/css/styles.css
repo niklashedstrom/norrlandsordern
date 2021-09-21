@@ -72,6 +72,18 @@
   width: 50%;
 }
 
+.log-table .bi-pencil-square {
+  font-size: 1.5em;
+}
+
+.log-table th {
+  vertical-align: middle;
+}
+
+.log-table th:last-child {
+  text-align: center;
+}
+
 #status {
   -webkit-animation: cssAnimation 5s forwards;
   animation: cssAnimation 5s forwards;

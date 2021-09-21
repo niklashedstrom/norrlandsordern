@@ -7,6 +7,7 @@ const passwordGen = require('generate-password');
 const LocalStrategy = require('passport-local').Strategy;
 const db = require('./database');
 const mailer = require('./mailer');
+const helper = require('./helpers');
 
 const VERSION = require('./package.json').version;
 
@@ -18,53 +19,6 @@ const auth = {
       res.redirect('/login')
     }
   }
-}
-
-const getPercentage = (dist) => {
-  const totalDist = 540811.52;
-  return dist/totalDist;
-}
-
-const getPosition = (dist) => {
-  const compensation = 1.008; // To handle offset due to lonitude not being linear. Should be changed continuously.
-  const startPos = [55.710783, 13.210120];
-  const endPos = [60.201391, 16.739080];
-  const percentage = getPercentage(dist);
-  const lat = startPos[0] + percentage*(endPos[0]-startPos[0]);
-  const lon = startPos[1] + percentage**compensation*(endPos[1]-startPos[1]);
-  return {lat, lon};
-}
-
-const backUrl = (url) => url.split('/').slice(0,-1).join('/')
-
-const formatNumber = (number, decimals) => {
-  if (decimals == 0)
-    return (number).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$& ').slice(0,-3)
-  else
-    return (number).toFixed(decimals).replace(/\d(?=(\d{3})+\.)/g, '$& ')
-}
-
-const formatDate = (date) => {
-  date = new Date(date.toLocaleString('en-US', {timeZone: 'Europe/Stockholm'}))
-  const pad = (number) => ('000' + number).slice(-2)
-  const year = date.getFullYear()
-  const month = pad(date.getMonth() + 1);
-  const day = pad(date.getDate());
-  const hour = pad(date.getHours());
-  const minute = pad(date.getMinutes());
-  const second = pad(date.getSeconds());
-  return `${year}-${month}-${day} ${hour}:${minute}:${second}`
-}
-
-const formatDateDiff = (from, to) => {
-  const diff = to - from;
-  const minutes = parseInt(diff/1000/60)
-  const hours = parseInt(minutes/60)
-  const days = parseInt(hours/24)
-
-  if (days != 0) return (days == 1) ? '1 dag' : days + ' dagar';
-  if (hours != 0) return (hours == 1) ? '1 timme' : hours + ' timmar';
-  return (minutes == 1) ? '1 minut': minutes + ' minuter';
 }
 
 passport.use(new LocalStrategy((username, password, done) => {
@@ -113,18 +67,18 @@ app.get('/', (req, res) => {
       volume: cl,
       latestNorrlands: latestNorrlands.map(n => ({...n, diff: (new Date()) - n.created_at})),
       toplist: toplist,
-      percentage: getPercentage(m),
-      ...getPosition(m),
-      formatNumber: formatNumber,
-      formatDate: formatDate,
-      formatDateDiff: formatDateDiff,
+      percentage: helper.getPercentage(m),
+      ...helper.getPosition(m),
+      formatNumber: helper.formatNumber,
+      formatDate: helper.formatDate,
+      formatDateDiff: helper.formatDateDiff,
       version: VERSION,
     });
   })
 })
 
 app.get('/users/:id', auth.autenticated, async (req, res) => {
-  if (!req.user.admin || req.user.id != req.params.id) return res.sendStatus(401)
+  if (!req.user.admin && req.user.id != req.params.id) return res.sendStatus(401)
   try {
     const norrlands = await db.getNorrlands(req.params.id);
     const user = await db.getUser(req.params.id);
@@ -132,9 +86,9 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
       user: user,
       me: user.id == req.user.id,
       norrlands: norrlands,
-      formatNumber: formatNumber,
-      formatDate: formatDate,
-      formatDateDiff: formatDateDiff,
+      formatNumber: helper.formatNumber,
+      formatDate: helper.formatDate,
+      formatDateDiff: helper.formatDateDiff,
       lastLogged: req.query.id
     });
   } catch (e) {
@@ -147,7 +101,7 @@ app.get('/users/:id/edit', auth.autenticated, async (req, res) => {
   if (!req.user.admin && req.user.id != req.params.id) return res.sendStatus(401)
   try {
     const user = await db.getUser(req.params.id);
-    res.render('editUser', {backUrl: backUrl(req.url), user: user, admin: req.user.admin})
+    res.render('editUser', {backUrl: helper.backUrl(req.url), user: user, admin: req.user.admin})
   } catch (e) {
     console.log(e)
     return res.redirect('/failure')
@@ -164,7 +118,7 @@ app.post('/users/:id/edit', auth.autenticated, async (req, res) => {
 
     const pugData = {
       user: {...user, name: formData.name, email: formData.email},
-      backUrl: backUrl(req.url),
+      backUrl: helper.backUrl(req.url),
       admin: req.user.admin,
     }
 
@@ -207,9 +161,9 @@ app.get('/me', auth.autenticated, (req, res) => {
         user: req.user,
         me: true,
         norrlands: norrlands,
-        formatNumber: formatNumber,
-        formatDate: formatDate,
-        formatDateDiff: formatDateDiff,
+        formatNumber: helper.formatNumber,
+        formatDate: helper.formatDate,
+        formatDateDiff: helper.formatDateDiff,
         lastLogged: req.query.id
       });
     })
@@ -253,10 +207,22 @@ app.get('/logout', (req, res) => {
 app.get('/norrlands', auth.autenticated, (req, res) => {
   if (!req.user.admin) return res.sendStatus(401);
 
-  db.getAllNorrlands().then((norrlands) => {
+  if (!req.query.page || !req.query.pageSize)
+    return res.redirect('/norrlands?page=0&pageSize=25');
+
+  const page = parseInt(req.query.page)
+  const pageSize = parseInt(req.query.pageSize)
+
+  const link = (page, pageSize) => `/norrlands?page=${page}&pageSize=${pageSize}`
+
+  db.getNorrlandsPage(page, pageSize).then((norrlands) => {
     res.render('norrlandsList', {
       norrlands: norrlands.map(n => ({...n, link: `/norrlands/${n.id}`})),
-      formatDate: formatDate,
+      formatDate: helper.formatDate,
+      page: page,
+      pageSize: pageSize,
+      nextPage: link(page+1, pageSize),
+      prevPage: (page == 0) ? undefined : link(page-1, pageSize)
     })
   })
 })
@@ -266,32 +232,40 @@ app.get('/norrlands/:id', auth.autenticated, (req, res) => {
   db.getNorrlandsById(req.params.id).then(norrlands => {
     res.render('editNorrlands', {
       norrlands: norrlands,
-      backUrl: backUrl(req.url),
-      formatDate: formatDate,
+      backUrl: helper.backUrl(req.url),
+      formatDate: helper.formatDate,
     })
   })
 })
 
 app.post('/norrlands/:id', auth.autenticated, (req, res) => {
   if (!req.user.admin) return res.sendStatus(401);
-  if (Date.parse(req.body.created_at) == NaN)
+
+  if (req.body._method == 'delete')
+    return db.deleteNorrlands(req.params.id).then(() => {
+      res.redirect('/norrlands')
+    })
+
+  const volume = parseInt(req.body.volume);
+
+  if (isNaN(volume))
     return res.render('editNorrlands', {
       norrlands: req.body,
-      backUrl: backUrl(req.url),
+      backUrl: helper.backUrl(req.url),
+      formatDate: helper.formatDate,
       status: {
         type: 'warning',
-        message: 'Datumet är felformaterat',
+        message: 'Volymen är felformatterad',
       },
     })
   db.updateNorrlands(req.params.id, {
-    volume: req.body.volume,
-    created_at: req.body.created_at,
+    volume: volume,
   }).then(() => {
     db.getNorrlandsById(req.params.id).then(norrlands => {
       res.render('editNorrlands', {
         norrlands: norrlands,
-        backUrl: backUrl(req.url),
-        formatDate: formatDate,
+        backUrl: helper.backUrl(req.url),
+        formatDate: helper.formatDate,
         status: {
           type: 'success',
           message: 'Uppdateringen lyckad!',
@@ -299,7 +273,6 @@ app.post('/norrlands/:id', auth.autenticated, (req, res) => {
       })
     })
   })
-
 })
 
 app.post('/norrlands', auth.autenticated, (req, res) => {

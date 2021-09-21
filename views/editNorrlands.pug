@@ -1,0 +1,37 @@
+extends layout.pug
+
+block content
+  nav.navbar.navbar-expand-lg.navbar-light.bg-light
+    a.navbar-brand(href=backUrl)= "< Norrlandsordern"
+  .card.m-4
+    .card-body
+      h5.card-title= `Uppdatera logg ${norrlands.id}`
+      form(method='POST')
+        .form-group
+          label(for='volume') Volym
+          input#volume.form-control(required, name='volume', value=norrlands.volume)
+        .form-group
+          label(for='created_at') Skapad
+          input#created_at.form-control(required, disabled, name='created_at', value=formatDate(norrlands.created_at))
+        .form-group
+          label(for='username') Användarnamn
+          input#username.form-control(required, disabled, name='username', value=norrlands.username)
+        .form-group
+          label(for='name') Namn
+          input#name.form-control(required, disabled, name='name', value=norrlands.name)
+        hr
+        .row
+          .col-12
+            button.btn.btn-dark.btn-block(type='submit') Uppdatera
+      hr
+      .col-12
+      form(method='POST', onsubmit=`return confirm("Är du säker?");`)
+        input(type='hidden', name='_method', value='delete')
+        button.btn.btn-danger.btn-block(type='submit') Plocka bort
+        if status
+          .alert.mt-4(class=`alert-${status.type}`)= status.message
+block scripts
+  script(type='text/javascript').
+    function confirmDelete(id) {
+      return confirm("Är du säker?")
+    }
