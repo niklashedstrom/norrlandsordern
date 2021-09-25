@@ -117,3 +117,17 @@ exports.getTotalNorrlands = async () => {
   const total = response.map(r => r.volume).reduce((a,b) => a+b,0);
   return total+4686; //4686 cl var första kvällen, när allt startade.
 }
+
+exports.getWeeklyToplist = async (limit) => {
+  var curr = new Date;
+  const from = new Date(curr.setDate(curr.getDate() - curr.getDay()+1)).toISOString().substr(0,10);
+  const to = new Date(curr.setDate(curr.getDate() - curr.getDay()+7)).toISOString().substr(0,10);
+
+  const response = await knex
+    .select('name', 'volume_sum')
+    .from( knex('norrlands').select('user_id', knex.raw('SUM(volume) as volume_sum')).whereBetween('created_at', [from, to]).groupBy('user_id').as('t'))
+    .leftJoin('users','t.user_id','users.id')
+    .orderBy('volume_sum', 'desc')
+    .limit(limit)
+  return response.map((p, i) => ({...p, index: i +1}));
+}
