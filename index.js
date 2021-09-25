@@ -59,14 +59,15 @@ app.use(helmet({
 }));
 
 app.get('/', (req, res) => {
-  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(20)]).then(values => {
-    const [cl, latestNorrlands, toplist ] = values;
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(20), db.getWeeklyToplist(10)]).then(values => {
+    const [cl, latestNorrlands, toplist, weeklyToplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
     res.render('home', {
       user: req.user,
       volume: cl,
       latestNorrlands: latestNorrlands.map(n => ({...n, diff: (new Date()) - n.created_at})),
       toplist: toplist,
+      weeklyToplist: weeklyToplist,
       percentage: helper.getPercentage(m),
       ...helper.getPosition(m),
       formatNumber: helper.formatNumber,
