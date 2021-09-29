@@ -50,6 +50,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'cats',
   resave: false,
   saveUninitialized: true,
+  cookie: {
+    maxAge: 365*24*3600*1000,
+  },
+  rolling: true,
 }));
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
