@@ -122,7 +122,7 @@ exports.getWeeklyToplist = async (limit) => {
   const d = new Date();
   const mon = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6:1); // adjust when day is sunday
   const from = new Date(d.setDate(mon)).toISOString().substr(0,10)
-  const to = new Date(d.setDate(mon+6)).toISOString().substr(0,10)
+  const to = new Date(d.setDate(d.getDate() - d.getDay()+7)).toISOString().substr(0,10);
 
   const response = await knex
     .select('name', 'volume_sum')
