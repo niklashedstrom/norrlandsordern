@@ -41,15 +41,48 @@ exports.getUser = async (id, password) => {
   return user;
 }
 
-exports.getToplist = async (limit) => {
+exports.getAllUsers = async () => {
+  return await knex('users')
+}
+
+exports.getUserCount = async () => {
+  return (await knex('users').count('*'))[0].count
+}
+
+formatToplist = (res, limit, userId) => {
+  const toplist = res.slice(0,limit).map((p, i) => ({...p, index: i + 1, self: userId == p.id}))
+
+  if (!toplist.some(p => p.self))
+    res.forEach((p, i) => { if (p.id == userId) toplist.push({...p, index: i + 1, self: true})})
+
+  return toplist;
+}
+
+exports.getToplist = async (limit, userId) => {
   const response = await knex
-    .select('name', 'volume_sum')
+    .select('name', 'volume_sum', 'id')
     .from( knex('norrlands').select('user_id', knex.raw('SUM(volume) as volume_sum')).groupBy('user_id').as('t'))
     .leftJoin('users','t.user_id','users.id')
     .orderBy('volume_sum', 'desc')
-    .limit(limit)
-  return response.map((p, i) => ({...p, index: i +1}));
+
+  return formatToplist(response, limit, userId)
 }
+
+exports.getWeeklyToplist = async (limit, userId) => {
+  const d = new Date();
+  const mon = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6:1); // adjust when day is sunday
+  const from = new Date(d.setDate(mon)).toISOString().substr(0,10)
+  const to = new Date(d.setDate(d.getDate() - d.getDay()+8)).toISOString().substr(0,10);
+
+  const response = await knex
+    .select('id', 'name', 'volume_sum')
+    .from( knex('norrlands').select('user_id', knex.raw('SUM(volume) as volume_sum')).whereBetween('created_at', [from, to]).groupBy('user_id').as('t'))
+    .leftJoin('users','t.user_id','users.id')
+    .orderBy('volume_sum', 'desc')
+
+  return formatToplist(response, limit, userId)
+}
+
 
 exports.getUserFromEmail = async (email) => {
   const users = await knex('users').select('*').where({email: email});
@@ -118,17 +151,31 @@ exports.getTotalNorrlands = async () => {
   return total+4686; //4686 cl var första kvällen, när allt startade.
 }
 
-exports.getWeeklyToplist = async (limit) => {
-  const d = new Date();
-  const mon = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6:1); // adjust when day is sunday
-  const from = new Date(d.setDate(mon)).toISOString().substr(0,10)
-  const to = new Date(d.setDate(d.getDate() - d.getDay()+7)).toISOString().substr(0,10);
+exports.getAccumulatedNorrlands = async () => {
+  const response = await knex('norrlands').select('volume', 'created_at').orderBy('created_at', 'asc');
 
-  const response = await knex
-    .select('name', 'volume_sum')
-    .from( knex('norrlands').select('user_id', knex.raw('SUM(volume) as volume_sum')).whereBetween('created_at', [from, to]).groupBy('user_id').as('t'))
-    .leftJoin('users','t.user_id','users.id')
-    .orderBy('volume_sum', 'desc')
-    .limit(limit)
-  return response.map((p, i) => ({...p, index: i +1}));
+  const y = [];
+  const x = [];
+
+  let currentDate = response[0].created_at;
+  y.push(currentDate.toISOString().substring(0, 10))
+
+  while (currentDate < Date.now()) {
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+    y.push(nextDate.toISOString().substring(0,10))
+    currentDate = nextDate
+  }
+
+  let currentSum = 0;
+
+  y.forEach(d => {
+    currentSum += response.filter(n => n.created_at.toISOString().slice(0,10) == d).reduce((a,b) => a+b.volume, 0)
+    x.push(currentSum)
+  })
+
+  return {
+    x: x,
+    y: y,
+  }
 }

@@ -4,11 +4,23 @@
   height: 360px;
 }
 
+a[disabled] {
+  pointer-events: none;
+}
+
+.bg-sm {
+  height: 180px;
+}
+
 .logo {
   display: block;
   width: 300px;
   margin: 0 auto;
   padding-top: 80px;
+}
+
+.logo-sm {
+  width: 200px;
 }
 
 .restrict-width {
@@ -23,6 +35,18 @@
   width: 100%;
   height: 300px;
   margin-top: -100px;
+}
+
+.offset {
+  background-position: 160px center;
+}
+
+.row {
+  margin: 0;
+}
+
+.row * {
+  padding-left: 0;
 }
 
 .white {
@@ -88,6 +112,36 @@
   -webkit-animation: cssAnimation 5s forwards;
   animation: cssAnimation 5s forwards;
 }
+
+.image-container * {
+  margin-left: auto;
+  margin-right: 0;
+  display: block;
+}
+
+#members {
+  background-color: #dcbf8a;
+}
+
+#members table {
+  border-color: #CBA051;
+}
+
+#coins {
+  width: 120px;
+  margin-top: 20px;
+}
+
+#cans {
+  width: 180px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.progress * {
+  background-color: #0A243E;
+}
+
 @keyframes cssAnimation {
     0%   {opacity: 1;}
     50%  {opacity: 1;}

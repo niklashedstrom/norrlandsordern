@@ -1,7 +1,14 @@
+const TOTAL_DISTANCE = 540_811.52;
+const TOTAL_CANS = 8_194_114;
+const TOTAL_CL = TOTAL_CANS * 33;
+const START_DATE = new Date("2020-09-13");
 
 exports.getPercentage = (dist) => {
-  const totalDist = 540811.52;
-  return dist/totalDist;
+  return dist/TOTAL_DISTANCE;
+}
+
+exports.getNorrlandsPerUser = (totalUsers) => {
+  return Math.floor(TOTAL_CANS/totalUsers)
 }
 
 exports.getPosition = (dist) => {
@@ -33,6 +40,12 @@ exports.formatDate = (date) => {
   const minute = pad(date.getMinutes());
   const second = pad(date.getSeconds());
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`
+}
+
+exports.getYearsToSuccess = (cl) => {
+  const diff = Date.now() - START_DATE;
+  const percentage = cl / TOTAL_CL;
+  return Math.abs(new Date(diff/percentage).getUTCFullYear() - 1970);
 }
 
 exports.formatDateDiff = (from, to) => {

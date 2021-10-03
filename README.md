@@ -12,7 +12,7 @@ CREATE DATABASE norrlandsordern;
 exit
 ```
 Ha node och npm installerat och kör:
-```
+```bash
 npm install
 npm run dev
 ```

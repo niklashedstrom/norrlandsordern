@@ -18,6 +18,13 @@ const auth = {
     } else {
       res.redirect('/login')
     }
+  },
+  adminOrUser: (req, res, next) => {
+    if (req.user.admin || req.user.id == req.params.id) {
+      next()
+    } else {
+      res.sendStatus(401)
+    }
   }
 }
 
@@ -63,14 +70,17 @@ app.use(helmet({
 }));
 
 app.get('/', (req, res) => {
-  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(20), db.getWeeklyToplist(10)]).then(values => {
-    const [cl, latestNorrlands, toplist, weeklyToplist ] = values;
+  const toplistSize = 10;
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?.id), db.getUserCount(), db.getWeeklyToplist(toplistSize, req.user?.id)]).then(values => {
+    const [cl, latestNorrlands, allTimeToplist, userCount, weeklyToplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
+
     res.render('home', {
       user: req.user,
+      userCount: userCount,
       volume: cl,
       latestNorrlands: latestNorrlands.map(n => ({...n, diff: (new Date()) - n.created_at})),
-      toplist: toplist,
+      allTimeToplist: allTimeToplist,
       weeklyToplist: weeklyToplist,
       percentage: helper.getPercentage(m),
       ...helper.getPosition(m),
@@ -82,8 +92,78 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('/users/:id', auth.autenticated, async (req, res) => {
-  if (!req.user.admin && req.user.id != req.params.id) return res.sendStatus(401)
+app.get('/statistics', auth.autenticated, async (req, res) => {
+  const toplistSize = 10;
+  Promise.all([db.getTotalNorrlands(), db.getAllUsers(), db.getToplist(toplistSize, req.user?.id), db.getWeeklyToplist(toplistSize, req.user?.id), db.getLatestNorrlands(10), db.getAccumulatedNorrlands()]).then(values => {
+    const [ cl, users, allTimeToplist, weeklyToplist, latestNorrlands, accumulated ] = values;
+    const m = (cl/33*0.066).toFixed(2);
+    res.render('statistics', {
+      volume: cl,
+      totalUsers: users.length,
+      latestUsers: users.reverse().slice(0, 10),
+      latestNorrlands: latestNorrlands.map(n => ({...n, diff: (new Date()) - n.created_at})),
+      norrlandsPerUser: helper.getNorrlandsPerUser(users.length),
+      timeToSuccess: helper.getYearsToSuccess(cl),
+      allTimeToplist: allTimeToplist,
+      weeklyToplist: weeklyToplist,
+      accumulated: accumulated,
+      percentage: helper.getPercentage(m),
+      formatNumber: helper.formatNumber,
+      formatDate: helper.formatDate,
+      ...helper.getPosition(m),
+    })
+  })
+})
+
+app.get('/statistics/toplist-all-time', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/toplist-all-time?size=25')
+
+  Promise.all([db.getToplist(size, req.user?.id)]).then(values => {
+    const [ toplist ] = values;
+    res.render('toplist-all-time', {
+      backUrl: helper.backUrl(req.url),
+      toplist: toplist,
+      size: size,
+      formatNumber: helper.formatNumber,
+    })
+  })
+})
+
+app.get('/statistics/toplist-weekly', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/toplist-weekly?size=25')
+
+  Promise.all([db.getWeeklyToplist(size, req.user?.id)]).then(values => {
+    const [ toplist ] = values;
+    res.render('toplist-weekly', {
+      backUrl: helper.backUrl(req.url),
+      toplist: toplist,
+      size: size,
+      formatNumber: helper.formatNumber,
+    })
+  })
+})
+
+app.get('/statistics/log', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/log?size=25')
+
+  Promise.all([db.getLatestNorrlands(size)]).then(values => {
+    const [ latestNorrlands ] = values;
+    res.render('log-list', {
+      backUrl: helper.backUrl(req.url),
+      latestNorrlands: latestNorrlands,
+      formatNumber: helper.formatNumber,
+      formatDate: helper.formatDate,
+    })
+  })
+})
+
+app.get('/users/:id', auth.autenticated, auth.adminOrUser, async (req, res) => {
   try {
     const norrlands = await db.getNorrlands(req.params.id);
     const user = await db.getUser(req.params.id);
@@ -97,24 +177,20 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
       lastLogged: req.query.id
     });
   } catch (e) {
-    console.log(e)
     return res.redirect('/failure')
   }
 })
 
-app.get('/users/:id/edit', auth.autenticated, async (req, res) => {
-  if (!req.user.admin && req.user.id != req.params.id) return res.sendStatus(401)
+app.get('/users/:id/edit', auth.autenticated, auth.adminOrUser, async (req, res) => {
   try {
     const user = await db.getUser(req.params.id);
     res.render('editUser', {backUrl: helper.backUrl(req.url), user: user, admin: req.user.admin})
   } catch (e) {
-    console.log(e)
     return res.redirect('/failure')
   }
 })
 
-app.post('/users/:id/edit', auth.autenticated, async (req, res) => {
-  if (!req.user.admin && req.user.id != req.params.id) return res.sendStatus(401)
+app.post('/users/:id/edit', auth.autenticated, auth.adminOrUser, async (req, res) => {
   try {
     const changedData = {}
     const formData = req.body;
@@ -148,12 +224,10 @@ app.post('/users/:id/edit', auth.autenticated, async (req, res) => {
     if (!req.user.admin && changedData.admin)
       return res.render('editUser', {...pugData, status: {type: 'warning', message: 'Bara en admin får ändra adminstatus, inget sparades.'}})
 
-    console.log(changedData)
     await db.updateUser(user.id, changedData)
     return res.render('editUser', {...pugData, status: {type: 'success', message: 'Informationen är uppdaterad!'}})
 
   } catch (e) {
-    console.log(e)
     return res.redirect('/failure')
   }
 
