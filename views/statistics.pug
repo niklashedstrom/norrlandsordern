@@ -1,0 +1,235 @@
+extends layout.pug
+include mixins/toplist.pug
+include mixins/log.pug
+
+block extrameta
+  link(
+    rel='stylesheet',
+    href='https://unpkg.com/leaflet@1.7.1/dist/leaflet.css',
+    integrity='sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==',
+    crossorigin='')
+  script(
+    src='https://unpkg.com/leaflet@1.7.1/dist/leaflet.js',
+    integrity='sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==',
+    crossorigin='')
+  link(
+    rel='stylesheet',
+    href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css')
+  script(
+    src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js')
+  script(
+    src='https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js',
+    integrity='sha256-bC3LCZCwKeehY6T4fFi9VfOU0gztUa+S4cnkIhVPZ5E=',
+    crossorigin='anonymous'
+  )
+
+block content
+  .header
+    .background.bg-sm
+      img.logo.logo-sm(src='/images/statistics.svg', alt='Statistik')
+    .banner.offset
+  .signin.p-4.pb-5.text-center
+    .restrict-width.btn-vertical-group
+      a.btn.btn-outline-light.btn-block(href='/statistics#distance') Distans
+      a.btn.btn-outline-light.btn-block(href='/statistics#members') Medlemmar
+      a.btn.btn-outline-light.btn-block(href='/statistics#toplists') Topplistor
+      a.btn.btn-outline-light.btn-block(href='/statistics#log') Logg
+      a.btn.btn-outline-light.btn-block(href='/') Tillbaka
+  #distance.p-4
+    .restrict-width
+      p.subheader Distans
+      h4.red Volym
+      p.
+        När du bidrar till Norrlandsordern loggar du öl i antalet centiliter
+        som enheten innehåller, men hur mycket har vi lyckats dricka hittils?
+      .row
+        .col-6.text-right
+          h5= formatNumber(volume/100, 1)
+        .col-6
+          small.text-muted= " liter"
+      .row
+        .col-6.text-right
+          h5= formatNumber(volume/33/24, 0)
+        .col-6
+          small.text-muted= " flak"
+      .row
+        .col-6.text-right
+          h5= formatNumber(volume/33, 0)
+        .col-6
+          small.text-muted= " 33 cl burkar"
+      canvas#accumulated-distance
+  .approach.p-4
+    .restrict-width
+      h4.red Kostnad
+      p.white.
+        All denna öl har självklart kostat våra medlemmar en del, men det är svårt
+        att beräkna den totala kostnaden eftersom alla varianter räknas, alkoholfri
+        som folköl, Norrlands ljus som Norrlands djup, från puben eller systemet.
+        Här är kostnaden om #[em all] loggad öl var från samma ställe:
+      .row
+        .col-7
+          small.text-muted Guld 5.3% från Bordershop
+        .col-4.text-right.white
+          h5= formatNumber(volume/33/24/3*206.65, 2)
+        .col-1
+          small.text-muted= " kr"
+      .row
+        .col-7
+          small.text-muted Guld 5.3% från Systembolaget
+        .col-4.text-right.white
+          h5= formatNumber(volume/33/24*285.6, 2)
+        .col-1
+          small.text-muted= " kr"
+      .row
+        .col-7
+          small.text-muted Djup 6.8% från Systembolaget
+        .col-4.text-right.white
+          h5= formatNumber(volume/50*17.9, 2)
+        .col-1
+          small.text-muted= " kr"
+      .row
+        .col-7
+          small.text-muted Guld 3.5% från Willys
+        .col-4.text-right.white
+          h5= formatNumber(volume/50/6*61.90, 2)
+        .col-1
+          small.text-muted= " kr"
+      .row
+        .col-7
+          small.text-muted Guld 2.8% från Willys
+        .col-4.text-right.white
+          h5= formatNumber(volume/50/6*32.50, 2)
+        .col-1
+          small.text-muted= " kr"
+      .row
+        .col-7
+          small.text-muted Guld alkoholfri från Willys
+        .col-4.text-right.white
+          h5= formatNumber(volume/33/6*41.90, 2)
+        .col-1
+          small.text-muted= " kr"
+      .image-container
+        img#coins(src='images/coins.svg', alt='Mynthög')
+  .p-4
+    .restrict-width
+      h4.red Distans
+      p.
+        Till det viktigaste måttet, distansen hittills. För målet är ju ändå att ta
+        oss till Norrland, men hur räknas egentligen centiliterna om till meter?
+        Varje drucken 33 cl burk, som är 6.6 cm, ställs sida vid sida och bildar
+        en virtuell kedja hela vägen upp.
+      .row
+        .col-6.text-right
+          h5= formatNumber(volume/33*0.066, 2)
+        .col-6
+          small.text-muted= " meter"
+      .row
+        .col-6.text-right
+          h5= formatNumber(percentage*100, 2)
+        .col-6
+          small.text-muted= " %"
+      .progress.mb-4
+        .progress-bar(
+          role='progressbar',
+          style=`width: ${percentage*100}%;`,
+          aria-valuenow=percentage,
+          aria-valuemin=0,
+          aria-valuemax=1,
+          aria-label='Framsteg'
+          )
+      .image-container
+        img#cans(src='images/cans.svg', alt='Burkar')
+      #map-status
+  #members.p-4
+    .restrict-width
+      p.subheader.blue Medlemmar
+      h4.red Totalt
+      p.
+        Hittills har vi blivit #[em=`${totalUsers} medlemmar`] vilket innebär att varje
+        medlem måste dricka #[em=`${formatNumber(norrlandsPerUser,0)} burkar`] för att vi ska
+        nå fram. Fortsätter vi i samma tempo som vi haft sedan start kommer det ta
+        #[em=`${formatNumber(timeToSuccess)} år`].
+      h4.red Senaste medlemmar
+      each user in latestUsers
+        .row
+          .col-2.text-right
+            p.text-muted= user.id
+          .col-10
+            p= user.name
+  #toplists.p-4
+    .restrict-width
+      p.subheader.blue Topplistor
+      h4.red Total distans
+      +toplist(allTimeToplist)
+      a(href='/statistics/toplist-all-time')
+        button.btn.btn-outline-dark.btn.btn-block Se fler
+      h4.red Veckans distans
+      +toplist(weeklyToplist)
+      a(href='/statistics/toplist-weekly')
+        button.btn.btn-outline-dark.btn.btn-block Se fler
+  #log.p-4
+    .restrict-width
+      h4.red Senaste loggade ölen
+      +log(latestNorrlands)
+      a(href='/statistics/log')
+        button.btn.btn-outline-dark.btn.btn-block Se fler
+
+block scripts
+  script(type='text/javascript').
+    const map = L.map('map-status', {
+      fullscreenControl: true
+    }).setView([#{lat}, #{lon}], 14);
+    L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    L.polyline([[#{lat}, #{lon}], [60.201391, 16.739080]], {
+      color: '#BE162F',
+      dashArray: '10, 10'
+    }).addTo(map);
+    L.polyline([[55.710783, 13.210120], [#{lat}, #{lon}]], {
+      color: '#0A243E'
+    }).addTo(map);
+    L.marker([#{lat}, #{lon}], {
+      icon: L.icon({
+        iconUrl: '/images/marker.svg',
+        iconSize: [82, 54],
+        iconAnchor: [41, 54]
+      }),
+    }).addTo(map);
+  script(type='text/javascript').
+    const config = {
+      type: 'line',
+      data: {
+        //labels: [ '2021-10-03', '2021-09-23', '2021-09-21', '2021-08-31' ],
+        labels: [#{accumulated.y.map(d => `'${d}'`)}],
+        datasets: [{
+          label: 'Accumulerad distans',
+          data: [#{accumulated.x}],
+          fill: true,
+        }],
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
+        scales: {
+          xAxes: {
+            display: false
+          },
+          yAxes: {
+            display: false
+          }
+        }
+      }
+    }
+    const chart = new Chart(
+      document.getElementById('accumulated-distance'),
+      config,
+    );

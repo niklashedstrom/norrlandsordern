@@ -1,0 +1,19 @@
+extends layout
+include mixins/toplist.pug
+
+block content
+  nav.navbar.navbar-expand-lg.navbar-light.bg-light
+    a.navbar-brand(href=backUrl)= "< Norrlandsordern"
+  .p-4
+    .restrict-width
+      h4.card-title.ml-4 Länst distans
+      .btn-group.container-fluid
+        if size != 10
+          a.btn.btn-outline-dark(href='/statistics/toplist-weekly?size=10') 10
+        if size != 25
+          a.btn.btn-outline-dark(href='/statistics/toplist-weekly?size=25') 25
+        if size != 50
+          a.btn.btn-outline-dark(href='/statistics/toplist-weekly?size=50') 50
+        if size != 100
+          a.btn.btn-outline-dark(href='/statistics/toplist-weekly?size=100') 100
+      +toplist(toplist)

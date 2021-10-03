@@ -1,0 +1,11 @@
+mixin log(l)
+  table.borderless.table.m-0
+    thead
+      tr
+        th(scope='col') Namn
+        th(scope='col') Tid
+    tbody
+      each item in l
+        tr
+          td= item.name
+          td= formatDate(item.created_at)

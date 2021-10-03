@@ -1,4 +1,6 @@
 extends layout.pug
+include mixins/toplist.pug
+include mixins/log.pug
 
 
 block extrameta
@@ -40,80 +42,31 @@ block content
     .restrict-width
       p.subheader Status
       h4.red Hur långt har vi kommit?
-      p Mängden norrlands som druckits kommer nedan i alla möjliga olika former.
-      .row
-        .col-6.text-right
-          h5= formatNumber(volume/100, 1)
-        .col-6
-          small.text-muted= " liter"
-      .row
-        .col-6.text-right
-          h5= formatNumber(volume/33, 0)
-        .col-6
-          small.text-muted= " burkar"
-      .row
-        .col-6.text-right
-          h5= formatNumber(volume/33/24, 0)
-        .col-6
-          small.text-muted= " flak"
-      .row
-        .col-6.text-right
-          h5= formatNumber(volume/33/24/3*234.69, 2)
-        .col-6
-          small.text-muted= " kr"
-      .row
-        .col-6.text-right
-          h5= formatNumber(volume/33*0.066, 2)
-        .col-6
-          small.text-muted= " meter"
-      .row
-        .col-6.text-right
-          h5= formatNumber(percentage*100, 2)
-        .col-6
-          small.text-muted= " %"
-      .progress.mb-4
-        .progress-bar(role='progressbar', aria-valuenow=percentage, aria-valuemin=0, aria-volumemax=1)
+      p
+        | Sedan Norrlandsordern grundades den 13 september 2020 så har
+        em=` ${userCount} medlemmar `
+        | loggat öl från nere i söder till uppe i norr! Senaste ölen loggades för
+        em=` ${formatDateDiff(latestNorrlands[0].created_at, new Date())} `
+        | sedan och hittills har det loggats
+        em=` ${formatNumber(volume/33, 0)} burkar`
+        | , vilket motsvarar:
+      .text-center.mb-3
+        h1= formatNumber(volume/33*0.066, 2)
+        p meter
+        if user
+          a(href='/statistics')
+            button.btn.btn-outline-dark.btn.btn-block Se mer statistik
+
       #map-status.mb-4
       if user
-        #latest.p-4
+        #latest
           p.subheader Dumheter
           h4.red Senaste loggade ölen
-          table.borderless.table.m-0
-            thead
-              tr
-                th(scope='col') Namn
-                th(scope='col') Tid
-            tbody
-              each item in latestNorrlands
-                tr
-                  td= item.name
-                  td= formatDate(item.created_at)
+          +log(latestNorrlands)
           h4.red Veckans Topplista
-          table.borderless.table.m-0
-            thead
-              tr
-                th(scope='col')
-                th(scope='col') Namn
-                th(scope='col') Distans (m)
-            tbody
-              each item in weeklyToplist
-                tr
-                  td= item.index
-                  td= item.name
-                  td= formatNumber(item.volume_sum/33*0.066, 2)
+          +toplist(weeklyToplist)
           h4.red Topplista
-          table.borderless.table.m-0
-            thead
-              tr
-                th(scope='col')
-                th(scope='col') Namn
-                th(scope='col') Distans (m)
-            tbody
-              each item in toplist
-                tr
-                  td= item.index
-                  td= item.name
-                  td= formatNumber(item.volume_sum/33*0.066, 2)
+          +toplist(allTimeToplist)
   .vision.p-4
     .restrict-width
       p.subheader.blue Vision
