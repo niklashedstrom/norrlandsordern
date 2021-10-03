@@ -71,9 +71,10 @@ app.use(helmet({
 
 app.get('/', (req, res) => {
   const toplistSize = 10;
-  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?.id), db.getUserCount(), db.getWeeklyToplist(toplistSize)]).then(values => {
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?.id), db.getUserCount(), db.getWeeklyToplist(toplistSize, req.user?.id)]).then(values => {
     const [cl, latestNorrlands, allTimeToplist, userCount, weeklyToplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
+
     res.render('home', {
       user: req.user,
       userCount: userCount,
@@ -96,7 +97,6 @@ app.get('/statistics', auth.autenticated, async (req, res) => {
   Promise.all([db.getTotalNorrlands(), db.getAllUsers(), db.getToplist(toplistSize, req.user?.id), db.getWeeklyToplist(toplistSize, req.user?.id), db.getLatestNorrlands(10), db.getAccumulatedNorrlands()]).then(values => {
     const [ cl, users, allTimeToplist, weeklyToplist, latestNorrlands, accumulated ] = values;
     const m = (cl/33*0.066).toFixed(2);
-    console.log(accumulated)
     res.render('statistics', {
       volume: cl,
       totalUsers: users.length,
