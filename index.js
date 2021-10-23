@@ -147,6 +147,38 @@ app.get('/statistics/toplist-weekly', auth.autenticated, async (req, res) => {
   })
 })
 
+app.get('/statistics/toplist-monthly', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/toplist-monthly?size=25')
+
+  Promise.all([db.getMonthlyToplist(size, req.user?.id)]).then(values => {
+    const [ toplist ] = values;
+    res.render('toplist-monthly', {
+      backUrl: helper.backUrl(req.url),
+      toplist: toplist,
+      size: size,
+      formatNumber: helper.formatNumber,
+    })
+  })
+})
+
+app.get('/statistics/toplist-yearly', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/toplist-yearly?size=25')
+
+  Promise.all([db.getYearlyToplist(size, req.user?.id)]).then(values => {
+    const [ toplist ] = values;
+    res.render('toplist-yearly', {
+      backUrl: helper.backUrl(req.url),
+      toplist: toplist,
+      size: size,
+      formatNumber: helper.formatNumber,
+    })
+  })
+})
+
 app.get('/statistics/log', auth.autenticated, async (req, res) => {
   const size = parseInt(req.query.size)
 
