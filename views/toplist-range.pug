@@ -1,3 +1,4 @@
+
 extends layout
 include mixins/toplist.pug
 
@@ -9,11 +10,11 @@ block content
       h4.card-title.ml-4 Länst distans
       .btn-group.container-fluid
         if size != 10
-          a.btn.btn-outline-dark(href='/statistics/toplist-monthly?size=10') 10
+          a.btn.btn-outline-dark(href='/statistics/toplist-' + range + '?size=10') 10
         if size != 25
-          a.btn.btn-outline-dark(href='/statistics/toplist-monthly?size=25') 25
+          a.btn.btn-outline-dark(href='/statistics/toplist-' + range + '?size=25') 25
         if size != 50
-          a.btn.btn-outline-dark(href='/statistics/toplist-monthly?size=50') 50
+          a.btn.btn-outline-dark(href='/statistics/toplist-' + range + '?size=50') 50
         if size != 100
-          a.btn.btn-outline-dark(href='/statistics/toplist-monthly?size=100') 100
+          a.btn.btn-outline-dark(href='/statistics/toplist-' + range + '?size=100') 100
       +toplist(toplist)
