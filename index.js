@@ -71,7 +71,7 @@ app.use(helmet({
 
 app.get('/', (req, res) => {
   const toplistSize = 10;
-  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?.id), db.getUserCount(), db.getWeeklyToplist(toplistSize, req.user?.id)]).then(values => {
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?.id), db.getUserCount(), db.getToplistRange(toplistSize, req.user?.id, 'week')]).then(values => {
     const [cl, latestNorrlands, allTimeToplist, userCount, weeklyToplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
 
@@ -94,8 +94,16 @@ app.get('/', (req, res) => {
 
 app.get('/statistics', auth.autenticated, async (req, res) => {
   const toplistSize = 10;
-  Promise.all([db.getTotalNorrlands(), db.getAllUsers(), db.getToplist(toplistSize, req.user?.id), db.getWeeklyToplist(toplistSize, req.user?.id), db.getLatestNorrlands(10), db.getAccumulatedNorrlands()]).then(values => {
-    const [ cl, users, allTimeToplist, weeklyToplist, latestNorrlands, accumulated ] = values;
+  Promise.all([
+    db.getTotalNorrlands(),
+    db.getAllUsers(),
+    db.getToplist(toplistSize, req.user?.id),
+    db.getToplistRange(toplistSize, req.user?.id, 'week'),
+    db.getToplistRange(toplistSize, req.user?.id, 'month'),
+    db.getToplistRange(toplistSize, req.user?.id, 'year'),
+    db.getLatestNorrlands(10),
+    db.getAccumulatedNorrlands()]).then(values => {
+    const [ cl, users, allTimeToplist, weeklyToplist, monthlyToplist, yearlyToplist, latestNorrlands, accumulated ] = values;
     const m = (cl/33*0.066).toFixed(2);
     res.render('statistics', {
       volume: cl,
@@ -106,6 +114,8 @@ app.get('/statistics', auth.autenticated, async (req, res) => {
       timeToSuccess: helper.getYearsToSuccess(cl),
       allTimeToplist: allTimeToplist,
       weeklyToplist: weeklyToplist,
+      monthlyToplist: monthlyToplist,
+      yearlyToplist: yearlyToplist,
       accumulated: accumulated,
       percentage: helper.getPercentage(m),
       formatNumber: helper.formatNumber,
@@ -136,12 +146,47 @@ app.get('/statistics/toplist-weekly', auth.autenticated, async (req, res) => {
 
   if (!size) res.redirect('/statistics/toplist-weekly?size=25')
 
-  Promise.all([db.getWeeklyToplist(size, req.user?.id)]).then(values => {
+  Promise.all([db.getToplistRange(size, req.user?.id, 'week')]).then(values => {
     const [ toplist ] = values;
-    res.render('toplist-weekly', {
+    res.render('toplist-range', {
       backUrl: helper.backUrl(req.url),
       toplist: toplist,
       size: size,
+      range: 'weekly',
+      formatNumber: helper.formatNumber,
+    })
+  })
+})
+
+app.get('/statistics/toplist-monthly', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/toplist-monthly?size=25')
+
+  Promise.all([db.getToplistRange(size, req.user?.id, 'month')]).then(values => {
+    const [ toplist ] = values;
+    res.render('toplist-range', {
+      backUrl: helper.backUrl(req.url),
+      toplist: toplist,
+      size: size,
+      range: 'monthly',
+      formatNumber: helper.formatNumber,
+    })
+  })
+})
+
+app.get('/statistics/toplist-yearly', auth.autenticated, async (req, res) => {
+  const size = parseInt(req.query.size)
+
+  if (!size) res.redirect('/statistics/toplist-yearly?size=25')
+
+  Promise.all([db.getToplistRange(size, req.user?.id, 'year')]).then(values => {
+    const [ toplist ] = values;
+    res.render('toplist-range', {
+      backUrl: helper.backUrl(req.url),
+      toplist: toplist,
+      size: size,
+      range: 'yearly',
       formatNumber: helper.formatNumber,
     })
   })

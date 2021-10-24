@@ -68,12 +68,23 @@ exports.getToplist = async (limit, userId) => {
   return formatToplist(response, limit, userId)
 }
 
-exports.getWeeklyToplist = async (limit, userId) => {
-  const d = new Date();
-  const mon = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6:1); // adjust when day is sunday
-  const from = new Date(d.setDate(mon)).toISOString().substr(0,10)
-  const to = new Date(d.setDate(d.getDate() - d.getDay()+8)).toISOString().substr(0,10);
-
+exports.getToplistRange = async (limit, userId, range) => {
+  let d = from = to = new Date()
+  switch(range) {
+    case 'week':
+      const mon = d.getDate() - d.getDay() + (d.getDay() == 0 ? -6:1) // adjust when day is sunday
+      from = new Date(d.setDate(mon)).toISOString().substr(0,10)
+      to = new Date(d.setDate(d.getDate() - d.getDay()+8)).toISOString().substr(0,10)
+      break;
+    case 'month':
+      from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString().substr(0,10)
+      to = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().substr(0,10)
+      break;
+    case 'year':
+      from = new Date(d.getFullYear(), 0, 1).toISOString().substr(0,10)
+      to = new Date(d.getFullYear(), 11, 31).toISOString().substr(0,10)
+      break;
+  }
   const response = await knex
     .select('id', 'name', 'volume_sum')
     .from( knex('norrlands').select('user_id', knex.raw('SUM(volume) as volume_sum')).whereBetween('created_at', [from, to]).groupBy('user_id').as('t'))
@@ -82,7 +93,6 @@ exports.getWeeklyToplist = async (limit, userId) => {
 
   return formatToplist(response, limit, userId)
 }
-
 
 exports.getUserFromEmail = async (email) => {
   const users = await knex('users').select('*').where({email: email});
