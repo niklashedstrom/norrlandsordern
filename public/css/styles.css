@@ -163,11 +163,11 @@ a[disabled] {
   }
 }
 
-a {
+.user-link {
   color: #000;
   text-decoration: underline;
 }
 
-a:hover {
+.user-link:hover {
   color: #444;
 }
