@@ -208,7 +208,7 @@ app.get('/statistics/log', auth.autenticated, async (req, res) => {
   })
 })
 
-app.get('/users/:id', auth.autenticated, auth.adminOrUser, async (req, res) => {
+app.get('/users/:id', auth.autenticated, async (req, res) => {
   try {
     const norrlands = await db.getNorrlands(req.params.id);
     const user = await db.getUser(req.params.id);

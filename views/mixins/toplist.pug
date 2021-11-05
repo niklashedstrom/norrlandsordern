@@ -12,11 +12,13 @@ mixin toplist(t)
             td
               b= item.index
             td
-              b= item.name
+              a(href=`/users/${item.id}`)
+                b= item.name
             td
               b= formatNumber(item.volume_sum/33*0.066, 2)
         else
           tr
             td= item.index
-            td= item.name
+            td
+              a(href=`/users/${item.id}`)= item.name
             td= formatNumber(item.volume_sum/33*0.066, 2)

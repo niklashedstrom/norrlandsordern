@@ -13,8 +13,9 @@ block content
         p.text-muted.m-0 E-post
         p
           strong= user.email
-        a(href=`users/${user.id}/edit`)
-          button.btn.btn-outline-dark Redigera
+        if me
+          a(href=`users/${user.id}/edit`)
+            button.btn.btn-outline-dark Redigera
   if me
     .restrict-width
       .card.m-4

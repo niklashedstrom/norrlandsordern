@@ -162,3 +162,12 @@ a[disabled] {
     height: 400px;
   }
 }
+
+a {
+  color: #000;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #444;
+}
