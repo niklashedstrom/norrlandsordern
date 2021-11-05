@@ -441,7 +441,6 @@ app.get('/search', auth.autenticated, async (req, res) => {
       users,
       term,
       backUrl: helper.backUrl(req.url),
-      formatDate: helper.formatDate,
     })
   })
 })
