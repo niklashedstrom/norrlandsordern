@@ -219,7 +219,7 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
     } else {
       return res.render('user', {
         user: user,
-        me: user.id == req.user.id,
+        me: self,
         norrlands: norrlands,
         formatNumber: helper.formatNumber,
         formatDate: helper.formatDate,
@@ -439,7 +439,7 @@ app.post('/forgot', async (req, res) => {
   }
 })
 
-const port = process.env.PORT || 5001
+const port = process.env.PORT || 5000
 
 const server = app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
