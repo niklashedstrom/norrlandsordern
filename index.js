@@ -433,6 +433,19 @@ app.post('/forgot', async (req, res) => {
   }
 })
 
+app.get('/search', auth.autenticated, async (req, res) => {
+  const term = req.query.t
+  
+  db.getUsersFromSearch(term).then(users => {
+    res.render('search', {
+      users,
+      term,
+      backUrl: helper.backUrl(req.url),
+      formatDate: helper.formatDate,
+    })
+  })
+})
+
 const port = process.env.PORT || 5000
 
 const server = app.listen(port, () => {

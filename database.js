@@ -189,3 +189,11 @@ exports.getAccumulatedNorrlands = async () => {
     y: y,
   }
 }
+
+exports.getUsersFromSearch = async (term) => {
+  return await knex('users').select(['id', 'name', 'username']).whereRaw(`
+    LOWER(name) LIKE LOWER('%${term}%') OR
+    LOWER(email) LIKE LOWER('%${term}%') OR
+    LOWER(username) LIKE LOWER('%${term}%')
+  `)
+}
