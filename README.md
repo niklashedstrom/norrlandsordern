@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-### Ladda ner databasen från Heroku och lägga till den i Docke
+### Ladda ner databasen från Heroku och lägga till den i Docker
 Fråga Niklas Hedström om att få access till Heroku
 
 Se till att Docker containern är igång
