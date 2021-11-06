@@ -4,10 +4,9 @@ block content
   nav.navbar.navbar-expand-lg.navbar-light.bg-light
     a.navbar-brand(href=('/'))= "< Norrlandsordern"
   .restrict-width
-    h2.m-4= `Sökterm: ${term}`
     form.m-4.mb-5(method='GET', action='/search')
-      input.form-control.mb-2(type='text', name='t', placeholder='Ny sökning')
-      input.form-control(id='search-bar', type='submit', value='Sök')
+      input.form-control.mb-2(type='text', name='t', value=term)
+      input#search-bar.form-control(type='submit', value='Sök')
     .card.m-4.mb-5
       h5.card-title.pt-2.ml-4 Resultat
       ul.list-group
