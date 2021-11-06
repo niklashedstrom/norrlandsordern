@@ -35,7 +35,7 @@ block content
           button.btn.btn-outline-light.btn-sm.btn-block.mb-2 Logga ut
         form(method='GET', action='/search')
           input.form-control.mb-2(type='text', name='t', placeholder='Sök efter användare')
-          input.btn.btn-outline-light.btn-sm.btn-block.form-control(id='search-bar', type='submit', value='Sök')
+          input#search-bar.btn.btn-outline-light.btn-sm.btn-block.form-control(type='submit', value='Sök')
       else
         a.mb-1(href='/login')
           button.btn.btn-light.btn-lg.btn-block.mb-2 Logga in
