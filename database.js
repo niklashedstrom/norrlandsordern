@@ -68,6 +68,27 @@ exports.getToplist = async (limit, userId) => {
   return formatToplist(response, limit, userId)
 }
 
+exports.getWeekWinners = async (limit, from, to) => {
+  return await knex
+    .select('id', 'name', 'volume_sum')
+    .from( knex('norrlands').select('user_id', knex.raw('SUM(volume) as volume_sum')).whereBetween('created_at', [from, to]).groupBy('user_id').as('t'))
+    .leftJoin('users','t.user_id','users.id')
+    .orderBy('volume_sum', 'desc').limit(limit)
+}
+
+exports.addToWeekTable = async (userId, place, week, year, volume) => {
+  if (userId && volume) {
+    return (await knex('weeks').insert({
+      user_id: userId,
+      place: place,
+      week: week,
+      year: year,
+      volume: volume,
+    }).returning('id'));
+  }
+  return false;
+}
+
 exports.getToplistRange = async (limit, userId, range) => {
   let d = from = to = new Date()
   switch(range) {
