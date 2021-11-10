@@ -13,8 +13,9 @@ block content
         p.text-muted.m-0 E-post
         p
           strong= user.email
-        a(href=`users/${user.id}/edit`)
-          button.btn.btn-outline-dark Redigera
+        if me
+          a(href=`users/${user.id}/edit`)
+            button.btn.btn-outline-dark Redigera
   if me
     .restrict-width
       .card.m-4
@@ -24,7 +25,7 @@ block content
             .form-row
               .col-4
                 label.sr-only(for='volume') Volym
-                select.form-control.form-control-lg(id='volume', name='volume')
+                select#volume.form-control.form-control-lg(name='volume')
                   option.selected(value='33') 33 cl
                   option(value='40') 40 cl
                   option(value='50') 50 cl

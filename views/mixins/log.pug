@@ -7,5 +7,6 @@ mixin log(l)
     tbody
       each item in l
         tr
-          td= item.name
+          td
+            a.user-link(href=`/users/${item.id}`)= item.name
           td= formatDate(item.created_at)

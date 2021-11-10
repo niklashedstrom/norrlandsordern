@@ -208,19 +208,25 @@ app.get('/statistics/log', auth.autenticated, async (req, res) => {
   })
 })
 
-app.get('/users/:id', auth.autenticated, auth.adminOrUser, async (req, res) => {
+app.get('/users/:id', auth.autenticated, async (req, res) => {
   try {
     const norrlands = await db.getNorrlands(req.params.id);
     const user = await db.getUser(req.params.id);
-    return res.render('user', {
-      user: user,
-      me: user.id == req.user.id,
-      norrlands: norrlands,
-      formatNumber: helper.formatNumber,
-      formatDate: helper.formatDate,
-      formatDateDiff: helper.formatDateDiff,
-      lastLogged: req.query.id
-    });
+    const self = user.id === req.user.id
+
+    if(self) {
+      res.redirect('/me')
+    } else {
+      return res.render('user', {
+        user: user,
+        me: self,
+        norrlands: norrlands,
+        formatNumber: helper.formatNumber,
+        formatDate: helper.formatDate,
+        formatDateDiff: helper.formatDateDiff,
+        lastLogged: req.query.id
+      });
+    }
   } catch (e) {
     return res.redirect('/failure')
   }
