@@ -26,9 +26,9 @@ block content
               .col-4
                 label.sr-only(for='volume') Volym
                 select#volume.form-control.form-control-lg(name='volume')
-                  option.selected(value='33') 33 cl
-                  option(value='40') 40 cl
-                  option(value='50') 50 cl
+                  option(value='33', selected=(norrlands[0].volume == '33' ? true : false)) 33 cl
+                  option(value='40', selected=(norrlands[0].volume == '40' ? true : false)) 40 cl
+                  option(value='50', selected=(norrlands[0].volume == '50' ? true : false)) 50 cl
               .col-8
                 button.btn.btn-lg.btn-primary.btn-block(type='submit') Mot Norrland!
   .restrict-width
