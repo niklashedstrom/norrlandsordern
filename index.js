@@ -224,7 +224,8 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
         formatNumber: helper.formatNumber,
         formatDate: helper.formatDate,
         formatDateDiff: helper.formatDateDiff,
-        lastLogged: req.query.id
+        lastLogged: req.query.id,
+        lastLoggedVolume: norrlands[0].volume,
       });
     }
   } catch (e) {
@@ -294,7 +295,8 @@ app.get('/me', auth.autenticated, (req, res) => {
         formatNumber: helper.formatNumber,
         formatDate: helper.formatDate,
         formatDateDiff: helper.formatDateDiff,
-        lastLogged: req.query.id
+        lastLogged: req.query.id,
+        lastLoggedVolume: norrlands[0].volume,
       });
     })
 })
