@@ -5,16 +5,26 @@ body {
   height: 100%;
 }
 
+.mobile-wrapper {
+  height: 100%;
+  width: 100%;
+  max-width: 400px;
+  position: absolute;
+}
+
+@media screen and (min-width: 400px) {
+  .mobile-wrapper {
+    left: calc(50% - 200px);
+  }
+}
+
 .fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
 }
 
 .slider {
-  position: fixed;
+  position: absolute;
 }
 
 .centered {
@@ -39,6 +49,13 @@ body {
   background-image: url(/images/background.png);
   background-position: center center;
   background-size: auto 300px;
+}
+
+.snake {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .snake > * {
@@ -160,7 +177,7 @@ body {
 
 .buttons {
   z-index: 100;
-  position: fixed;
+  position: absolute;
   top: 24px;
   right: 12px;
   display: flex;
@@ -184,7 +201,7 @@ body {
 }
 
 .hidden-navigation {
-  position: fixed;
+  position: absolute;
   top: 0;
   width: 100%;
   height: 100%;
@@ -200,7 +217,7 @@ body {
 }
 
 .progress-wrapper {
-  position: fixed;
+  position: absolute;
   top: 0;
   width: 100%;
   display: flex;
