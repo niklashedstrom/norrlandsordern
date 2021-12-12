@@ -197,8 +197,8 @@ function animate4() {
     [5000, () => fadeout(texts[0])],
     [5000, () => snake.classList.remove('hidden')],
     [6000, () => fadein(texts[1])],
-    [12000, () => fadeout(texts[1])],
-    [13000, () => fadein(texts[2])],
+    [13000, () => fadeout(texts[1])],
+    [14000, () => fadein(texts[2])],
     [19000, () => slidein(slider7)],
   ];
   startAnimation(steps);

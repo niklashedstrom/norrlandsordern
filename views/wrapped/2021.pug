@@ -45,9 +45,9 @@ block content
       img.nbr3(src='/images/can.svg', alt='Burk')
       img.nbr4(src='/images/can.svg', alt='Burk')
       img.nbr5(src='/images/can.svg', alt='Burk')
-    +slider("slider3", "#BE162F")
+    +slider("slider3", "#90be6d")
     .centered
-      h3 Ett utdrag från toplistan #2021
+      h3(style='color: #84649c') Ett utdrag från toplistan #2021
       table.borderless.table.m-0
         tbody
           each item in sublistToplist
@@ -64,7 +64,7 @@ block content
                 td= item.index
                 td= item.name
                 td= formatNumber(item.volume_sum/33*0.066, 2)
-    +slider("slider4", "#0A243E")
+    +slider("slider4", "#BE162F")
 
   #slide3.fullscreen.hidden
     .centered
@@ -125,6 +125,7 @@ block content
         | då du jobbade som hårdats och drack hela
         span(style='color: #b1e0ce')= ` ${topDay[1]} `
         | centiliter!
+    +slider("slider6", "#0A243E")
 
   // Personlig kostnad
   // Första loggade ölen 2021
