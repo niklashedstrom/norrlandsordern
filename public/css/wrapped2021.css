@@ -1,0 +1,337 @@
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+}
+
+.mobile-wrapper {
+  height: 100%;
+  width: 100%;
+  max-width: 400px;
+  position: absolute;
+}
+
+@media screen and (min-width: 400px) {
+  .mobile-wrapper {
+    left: calc(50% - 200px);
+  }
+}
+
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+.slider {
+  position: absolute;
+}
+
+.centered {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 90%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.background {
+  position: absolute;
+  bottom: 0;
+  height: 300px;
+  width: 100%;
+  background-image: url(/images/background.png);
+  background-position: center center;
+  background-size: auto 300px;
+}
+
+.snake {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.snake > * {
+  position: absolute;
+  top: 20%;
+  left: -25%;
+  width: 25%;
+}
+
+.snake .nbr1 { animation: snake 3s forwards 0ms   linear; }
+.snake .nbr2 { animation: snake 3s forwards 300ms linear; }
+.snake .nbr3 { animation: snake 3s forwards 600ms linear; }
+.snake .nbr4 { animation: snake 3s forwards 900ms linear; }
+.snake .nbr5 { animation: snake 3s forwards 1200ms linear; }
+
+/* Slide 1 */
+
+#slide1 {
+  background: linear-gradient(#CBA051, #FFF);
+  color: #0A243E;
+}
+
+.logo {
+  padding: 16px 0;
+  width: 250px;
+}
+
+#slider1 {
+  top: -130px;
+}
+
+#slider2 {
+  top: -1400px;
+}
+
+#slide1 .page1 .centered {
+  width: 100%;
+  transform: translate(-50%, -70%);
+}
+#slide1 .page1 .centered > * {
+  color: #0A243E
+}
+
+/* Slide 2 */
+
+#slider3, #slider4 {
+  top: -1400px;
+}
+
+#slide2 {
+  background-color: #0A243E;
+  color: #dcbf8a;
+}
+
+#slide2 td {
+  color: white;
+}
+
+/* Slide 3 */
+
+#slider5, #slider6 {
+  top: -1400px;
+}
+
+#slide3 {
+  background-color: #BE162F;
+  color: #dcbf8a;
+}
+
+#slide3 img {
+  width: 30%;
+}
+
+/* Slide 4 */
+
+#slide4 {
+  background-color: #5e2339;
+  color: #3ca27c;
+}
+
+#slider7 {
+  top: -1400px;
+}
+
+/* Slide 5 */
+
+#slide5 {
+  background-color: #0A243E;
+  color: #dcbf8a;
+}
+
+#slider8 {
+  top: -1400px;
+}
+
+/* Slide 6 */
+
+#slide6 {
+  background-color: #BE162F;
+  color: #dcbf8a;
+}
+
+#slider9 {
+  top: -1400px;
+}
+
+/* Slide 7 */
+
+#slide7 {
+  background: linear-gradient(#CBA051, #FFF);
+  color: #0A243E;
+}
+
+#slider10 {
+  top: -130px;
+}
+
+/* Buttons */
+
+.buttons {
+  z-index: 100;
+  position: absolute;
+  top: 24px;
+  right: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttons button {
+  height: 48px;
+  width: 48px;
+  background-color: transparent;
+  border: none;
+}
+.buttons button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.buttons i {
+  color: #fff8;
+  font-size: xx-large;
+}
+
+.hidden-navigation {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hidden-navigation button {
+  height: 100%;
+  width: 50%;
+  padding: 16px 64px;
+  background-color: transparent;
+  border: none;
+  z-index: 50;
+}
+
+.progress-wrapper {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 12px 8px;
+}
+
+.progress-wrapper .progress {
+  flex-grow: 1;
+  background-color: #ffffff70;
+  margin: 0 2px;
+  height: 3px;
+}
+
+.progress-wrapper .progress .progress-bar {
+  background-color: white;
+}
+
+.progress-done .progress-bar {
+  width: 100%;
+}
+
+.progress-current .progress-bar {
+  animation: progress-animation 20s linear;
+}
+
+@keyframes progress-animation {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes snake {
+  0% {
+    top: 20%;
+    left: -50px;
+    transform: rotate(-20deg);
+  }
+  15% {
+    transform: rotate(20deg);
+    top: 0;
+    left: 50%;
+  }
+  30% {
+    transform: rotate(80deg);
+    top: 20%;
+    left: calc(90% - 50px);
+  }
+  50% {
+    transform: rotate(90deg);
+    top: 50%;
+    left: calc(140% - 50px);
+  }
+  70% {
+    transform: rotate(120deg);
+    top: calc(80% - 50px);
+    left: calc(80% - 50px);
+  }
+  85% {
+    transform: rotate(180deg);
+    top: calc(90% - 50px);
+    left: calc(50% - 50px);
+  }
+  100% {
+    transform: rotate(200deg);
+    left: -35%;
+    top: 80%;
+  }
+}
+
+.fadein { animation: fadein 1s forwards ease-out; }
+.fadeout { animation: fadeout 0.7s forwards ease-in; }
+.slideout { animation: slideout 1.5s forwards; }
+.slidein { animation: slidein 1.5s forwards; }
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    top: 50%;
+  }
+  to {
+    opacity: 1;
+    top: 45%;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+    top: 45%;
+  }
+  to {
+    opacity: 0;
+    top: 42%;
+  }
+}
+
+@keyframes slideout {
+  from {
+    top: -120px;
+  }
+  to {
+    top: 1400px;
+  }
+}
+
+@keyframes slidein {
+  from {
+    top: -1400px;
+  }
+  to {
+    top: -120px;
+  }
+}

@@ -18,6 +18,10 @@ exports.addUser = async (user) => {
   return false;
 }
 
+exports.userHasVistitedWrapped2021 = async (userId) => {
+  await knex('users').where({id: userId}).update({wrapped_2021: true})
+}
+
 exports.updateUser = async (id, newData) => {
   if (newData.password) {
     const hash = await bcrypt.hash(newData.password, 10);
@@ -104,6 +108,10 @@ exports.getToplistRange = async (limit, userId, range) => {
     case 'year':
       from = new Date(d.getFullYear(), 0, 1).toISOString().substr(0,10)
       to = new Date(d.getFullYear(), 11, 31).toISOString().substr(0,10)
+      break;
+    case 'wrapped2021':
+      from = '2021-01-01'
+      to = '2021-11-30'
       break;
   }
   const response = await knex

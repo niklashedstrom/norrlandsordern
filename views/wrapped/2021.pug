@@ -1,0 +1,289 @@
+extends ../layout.pug
+include slider.pug
+
+block extrameta
+  link(rel='stylesheet', href='/css/wrapped2021.css')
+  script(
+    src='https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js',
+    integrity='sha256-bC3LCZCwKeehY6T4fFi9VfOU0gztUa+S4cnkIhVPZ5E=',
+    crossorigin='anonymous'
+  )
+block content
+
+  .mobile-wrapper
+    #slide1.fullscreen
+      .page1.fullscreen
+        .background
+        .centered
+          h1 2021 Wrapped
+          img.logo(src='/images/logo.svg', alt='Norrlandsordern logga')
+          p #NORRLANDSWRAPPED2021
+      +slider("slider1", "#BE162F")
+      .centered
+        h1(style='color: #dcbf8a') Det här året har varit allt annat än normalt
+      .centered
+        h1(style='color: #dcbf8a') Är du redo på att gå in på djupet?
+      +slider("slider2", "#0A243E")
+
+    #slide2.fullscreen.hidden
+      .centered
+        h3 2021 gjorde du vad som behövde göras
+        p &#8205; #[br] &#8205;
+      .centered
+        h3 &#8205; #[br] &#8205;
+        p Att sänka en folkis var enda kväll? Fullständigt normalt.
+      .centered
+        h3
+          | Du drack
+          span(style='color: #fff')= ` ${formatNumber(cl)} `
+          | centiliter Norrlands
+        p &#8205; #[br] &#8205;
+      .centered
+        h3 &#8205; #[br] &#8205;
+        p
+          | Det är mer än
+          span(style='color: #fff')= ` ${formatNumber(topPercentage)}% `
+          | av andra medlemmar i
+          span(style='color: #fff')= ` ordern`
+      .snake
+        img.nbr1(src='/images/can.svg', alt='Burk')
+        img.nbr2(src='/images/can.svg', alt='Burk')
+        img.nbr3(src='/images/can.svg', alt='Burk')
+        img.nbr4(src='/images/can.svg', alt='Burk')
+        img.nbr5(src='/images/can.svg', alt='Burk')
+      +slider("slider3", "#90be6d")
+      .centered
+        h3(style='color: #84649c') Ett utdrag från toplistan #2021
+        table.borderless.table.m-0
+          tbody
+            each item in sublistToplist
+              if item.self == true
+                tr
+                  td
+                    b= item.index
+                  td
+                    b= item.name
+                  td
+                    b= formatNumber(item.volume_sum/33*0.066, 2)
+              else
+                tr
+                  td= item.index
+                  td= item.name
+                  td= formatNumber(item.volume_sum/33*0.066, 2)
+      +slider("slider4", "#BE162F")
+
+    #slide3.fullscreen.hidden
+      .centered
+        h3 Medan andra försökte förstå sig på NFTs, så hade du en öl på repeat
+      .centered
+        img(src='/images/can.svg', alt='Burk')
+        h3
+          | Din favoritstorlek det här året var
+          span(style='color: #fff')= ` ${topVolumes[0][0]} `
+          | centiliter
+        p
+          | Du loggade den, det väldigt resonabla,
+          span(style='color: #fff')= ` ${topVolumes[0][1]} `
+          | gånger. Vilket är din rätt.
+      +slider("slider5", "#0074ce")
+      .centered(style='color: #f0b13e')
+        if topVolumes.filter(v => v[1] > 0) == 1
+          h3 Och det var den enda i din rotation...
+        else if topVolumes.filter(v => v[1] > 0) == 0
+          h3 Du hade ingen öl i din rotation...
+        else
+          h3 Men det var inte den enda i din rotation...
+      .centered(style='color: #f0b13e')
+        h3 Dina favoritvolumer
+        each volume in topVolumes
+          p
+            | Av
+            span(style='color: #fff')= ` ${volume[0]} `
+            | drack du
+            span(style='color: #fff')= ` ${volume[1]} `
+            | stycken
+      +slider("slider6", "#5e2339")
+
+    #slide4.fullscreen.hidden
+      .centered
+        h3 Varje resa måste ha en start, och så även den här
+      .centered
+        h3
+          | Du loggade din första öl den
+          span(style='color: #b1e0ce')= ` ${firstNorrland.norrland.created_at.toISOString().slice(0,10)} `
+          | vilket var den
+          span(style='color: #b1e0ce')= ` ${firstNorrland.index} `
+          | under 2021 totalt
+        p
+          | Vilket dessutom var din
+          span(style='color: #b1e0ce')= ` ${ (becameMember2021) ? 'första' : norrlandsBefore2021 } `
+          | någonsin!
+      .snake.hidden
+        img.nbr1(src='/images/can.svg', alt='Burk')
+        img.nbr2(src='/images/can.svg', alt='Burk')
+        img.nbr3(src='/images/can.svg', alt='Burk')
+        img.nbr4(src='/images/can.svg', alt='Burk')
+        img.nbr5(src='/images/can.svg', alt='Burk')
+      .centered
+        h3
+          | Vi kan inte heller glömma
+          span(style='color: #b1e0ce')= ` ${topDay[0]} `
+          | då du jobbade som hårdats och drack hela
+          span(style='color: #b1e0ce')= ` ${topDay[1]} `
+          | centiliter!
+      +slider("slider7", "#0A243E")
+
+    #slide5.fullscreen.hidden
+      .centered
+        h3 Nu har vi kollat på dagar värda att minnas
+        p Men hur ser din vardag ut?
+      .centered
+        h3
+          | Du loggade helst
+          span(style='color: #fff')= ` ${topTimeOfDay[0]} `
+          | på
+          span(style='color: #fff')= ` ${topDayOfWeek[0]} `
+      .centered
+        h3 Du vs Resten
+        canvas#top-hours-chart
+        canvas#top-weekdays-chart
+      +slider("slider8", "#BE162F")
+
+    #slide6.fullscreen.hidden
+      .centered
+        h3 Men allt är inte guld och gröna skogar
+        p Ditt fantastiska jobb har bidragit enormt, men till vilken kostnad?
+      .centered
+        h3 Om du hade köpt all din loggade öl från samma ställe
+        .row
+          .col-7
+            small Guld 5.3% från Bordershop
+          .col-4.text-right.white
+            h5= formatNumber(cl/33/24/3*206.65, 0)
+          .col-1
+            small= " kr"
+        .row
+          .col-7
+            small Guld 5.3% från Systemet
+          .col-4.text-right.white
+            h5= formatNumber(cl/33/24*285.6, 0)
+          .col-1
+            small= " kr"
+        .row
+          .col-7
+            small Djup 6.8% från Systemet
+          .col-4.text-right.white
+            h5= formatNumber(cl/50*17.9, 0)
+          .col-1
+            small= " kr"
+        .row
+          .col-7
+            small Guld 3.5% från Willys
+          .col-4.text-right.white
+            h5= formatNumber(cl/50/6*61.90, 0)
+          .col-1
+            small= " kr"
+        .row
+          .col-7
+            small Guld 2.8% från Willys
+          .col-4.text-right.white
+            h5= formatNumber(cl/50/6*32.50, 0)
+          .col-1
+            small= " kr"
+        .row
+          .col-7
+            small Guld alkoholfri från Willys
+          .col-4.text-right.white
+            h5= formatNumber(cl/33/6*41.90, 0)
+          .col-1
+            small= " kr"
+        .image-container
+          img#coins(src='/images/coins.svg', alt='Mynthög')
+      +slider("slider9", "#5e2339")
+
+    #slide7.fullscreen.hidden
+      .page1.fullscreen
+        .background
+        .centered
+          h3 Tack för att du är medlem och bidrar till vårt mål!
+          p Siffrorna är baserade på data mellan första januari och sista november
+        .centered
+          h1 2021 Wrapped
+          img.logo(src='/images/logo.svg', alt='Norrlandsordern logga')
+          p #NORRLANDSWRAPPED2021
+      +slider("slider10", "#5e2339")
+
+    .buttons
+      a(href='/')
+        button#close
+          i.bi.bi-x
+
+    .progress-wrapper
+      for i of [...new Array(7).keys()]
+        .progress
+          .progress-bar
+
+    .hidden-navigation
+      button#back
+      button#forward
+
+
+block scripts
+  script.
+    const config = {
+      type: 'line',
+      options: {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
+        scales: {
+          xAxes: {
+            display: true
+          },
+          yAxes: {
+            display: false
+          }
+        }
+      }
+    }
+    const topHours = {
+      labels: [#{topHours.map(d => d[0])}],
+      datasets: [{
+        label: 'Du',
+        data: [#{topHours.map(d => d[1])}],
+        borderColor: '#fffa',
+      },{
+        label: 'Alla',
+        data: [#{topHoursAll.map(d => d[1])}],
+        borderColor: '#fff3',
+      }],
+    }
+    const topWeekdays = {
+      labels: [#{topWeekdays.map(d => `'${d[0]}'`)}],
+      datasets: [{
+        label: 'Du',
+        data: [#{topWeekdays.map(d => d[1])}],
+        borderColor: '#fffa',
+      },{
+        label: 'Alla',
+        data: [#{topWeekdaysAll.map(d => d[1])}],
+        borderColor: '#fff3',
+      }],
+    }
+    const topHoursChart = new Chart(
+      document.getElementById('top-hours-chart'),
+      {...config, data: topHours },
+    );
+    const topWeekdaysChart = new Chart(
+      document.getElementById('top-weekdays-chart'),
+      {...config, data: topWeekdays },
+    );
+
+  script(src='/js/wrapped2021.js')
