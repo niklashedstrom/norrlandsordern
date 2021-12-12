@@ -112,6 +112,7 @@ exports.getToplistRange = async (limit, userId, range) => {
     case 'wrapped2021':
       from = '2021-01-01'
       to = '2021-11-30'
+      break;
   }
   const response = await knex
     .select('id', 'name', 'volume_sum')
