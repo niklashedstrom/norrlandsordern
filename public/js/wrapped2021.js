@@ -6,6 +6,7 @@ const slides = [...new Array(progressBars.length).keys()].map(i => document.getE
 progressBars[0].classList.add('progress-current');
 
 function forward() {
+  animationReset();
   if (currentSlide < progressBars.length - 1) {
     currentSlide++;
     updateProgressBars();
@@ -16,6 +17,7 @@ function forward() {
 }
 
 function back() {
+  animationReset();
   if (currentSlide > 0) {
     currentSlide--;
   } else {
@@ -33,7 +35,6 @@ animate1();
 
 function resetTimer() {
   animationTimers.forEach(timer => clearTimeout(timer));
-  animationReset();
   clearInterval(progressTimer);
   progressTimer = setInterval(forward, 20000);
 }
@@ -68,6 +69,9 @@ const animations = [
   animate2,
   animate3,
   animate4,
+  animate5,
+  animate6,
+  animate7,
 ]
 
 function updateSlides() {
@@ -200,6 +204,65 @@ function animate4() {
     [13000, () => fadeout(texts[1])],
     [14000, () => fadein(texts[2])],
     [19000, () => slidein(slider7)],
+  ];
+  startAnimation(steps);
+}
+
+function animate5() {
+  const slide = slides[4];
+  const slider8 = document.getElementById('slider8');
+  const texts = [...slide.getElementsByClassName('centered')];
+
+  animationReset = () => {
+    slider8.classList.remove('slideout', 'slidein');
+    texts.forEach(t => t.classList.remove('fadein', 'fadeout'))
+  }
+
+  const steps = [
+    [0000, () => fadein(texts[0])],
+    [4000, () => fadeout(texts[0])],
+    [5000, () => fadein(texts[1])],
+    [10000, () => fadeout(texts[1])],
+    [11000, () => fadein(texts[2])],
+    [19000, () => slidein(slider8)],
+  ];
+  startAnimation(steps);
+}
+
+function animate6() {
+  const slide = slides[5];
+  const slider9 = document.getElementById('slider9');
+  const texts = [...slide.getElementsByClassName('centered')];
+
+  animationReset = () => {
+    slider9.classList.remove('slideout', 'slidein');
+    texts.forEach(t => t.classList.remove('fadein', 'fadeout'))
+  }
+
+  const steps = [
+    [1000, () => fadein(texts[0])],
+    [5000, () => fadeout(texts[0])],
+    [6000, () => fadein(texts[1])],
+    [19000, () => slidein(slider9)],
+  ];
+  startAnimation(steps);
+}
+
+function animate7() {
+  const slide = slides[6];
+  const slider10 = document.getElementById('slider10');
+  const texts = [...slide.getElementsByClassName('centered')];
+
+  animationReset = () => {
+    slider10.classList.remove('slideout', 'slidein');
+    texts.forEach(t => t.classList.remove('fadein', 'fadeout'))
+  }
+
+  const steps = [
+    [1000, () => slideout(slider10)],
+    [2000, () => fadein(texts[0])],
+    [7000, () => fadeout(texts[0])],
+    [8000, () => fadein(texts[1])],
   ];
   startAnimation(steps);
 }

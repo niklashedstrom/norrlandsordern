@@ -3,9 +3,14 @@ include slider.pug
 
 block extrameta
   link(rel='stylesheet', href='/css/wrapped2021.css')
+  script(
+    src='https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js',
+    integrity='sha256-bC3LCZCwKeehY6T4fFi9VfOU0gztUa+S4cnkIhVPZ5E=',
+    crossorigin='anonymous'
+  )
 block content
 
-  #slide1.fullscreen(style='background-image: linear-gradient(#CBA051, #FFF);')
+  #slide1.fullscreen
     .page1.fullscreen
       .background
       .centered
@@ -125,22 +130,94 @@ block content
         | då du jobbade som hårdats och drack hela
         span(style='color: #b1e0ce')= ` ${topDay[1]} `
         | centiliter!
-    +slider("slider6", "#0A243E")
+    +slider("slider7", "#0A243E")
 
-  // Personlig kostnad
-  // Första loggade ölen 2021
-  // Dagen med flest loggar
-  // Tiden på dygnet med flest loggar
+  #slide5.fullscreen.hidden
+    .centered
+      h3 Nu har vi kollat på dagar värda att minnas
+      p Men hur ser din vardag ut?
+    .centered
+      h3
+        | Du loggade helst
+        span(style='color: #fff')= ` ${topTimeOfDay[0]} `
+        | på
+        span(style='color: #fff')= ` ${topDayOfWeek[0]} `
+    .centered
+      h3 Du vs Resten
+      canvas#top-hours-chart
+      canvas#top-weekdays-chart
+    +slider("slider8", "#BE162F")
+
+  #slide6.fullscreen.hidden
+    .centered
+      h3 Men allt är inte guld och gröna skogar
+      p Ditt fantastiska jobb har bidragit enormt, men till vilken kostnad?
+    .centered
+      h3 Om du hade köpt all din loggade öl från samma ställe
+      .row
+        .col-7
+          small Guld 5.3% från Bordershop
+        .col-4.text-right.white
+          h5= formatNumber(cl/33/24/3*206.65, 0)
+        .col-1
+          small= " kr"
+      .row
+        .col-7
+          small Guld 5.3% från Systemet
+        .col-4.text-right.white
+          h5= formatNumber(cl/33/24*285.6, 0)
+        .col-1
+          small= " kr"
+      .row
+        .col-7
+          small Djup 6.8% från Systemet
+        .col-4.text-right.white
+          h5= formatNumber(cl/50*17.9, 0)
+        .col-1
+          small= " kr"
+      .row
+        .col-7
+          small Guld 3.5% från Willys
+        .col-4.text-right.white
+          h5= formatNumber(cl/50/6*61.90, 0)
+        .col-1
+          small= " kr"
+      .row
+        .col-7
+          small Guld 2.8% från Willys
+        .col-4.text-right.white
+          h5= formatNumber(cl/50/6*32.50, 0)
+        .col-1
+          small= " kr"
+      .row
+        .col-7
+          small Guld alkoholfri från Willys
+        .col-4.text-right.white
+          h5= formatNumber(cl/33/6*41.90, 0)
+        .col-1
+          small= " kr"
+      .image-container
+        img#coins(src='/images/coins.svg', alt='Mynthög')
+    +slider("slider9", "#5e2339")
+
+  #slide7.fullscreen.hidden
+    .page1.fullscreen
+      .background
+      .centered
+        h3 Tack för att du är medlem och bidrar till vårt mål!
+      .centered
+        h1 2021 Wrapped
+        img.logo(src='/images/logo.svg', alt='Norrlandsordern logga')
+        p #NORRLANDSWRAPPED2021
+    +slider("slider10", "#5e2339")
 
   .buttons
-    button#volume
-      i.bi.bi-volume-up
     a(href='/')
       button#close
         i.bi.bi-x
 
   .progress-wrapper
-    for i of [...new Array(4).keys()]
+    for i of [...new Array(7).keys()]
       .progress
         .progress-bar
 
@@ -150,4 +227,61 @@ block content
 
 
 block scripts
+  script.
+    const config = {
+      type: 'line',
+      options: {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
+        scales: {
+          xAxes: {
+            display: true
+          },
+          yAxes: {
+            display: false
+          }
+        }
+      }
+    }
+    const topHours = {
+      labels: [#{topHours.map(d => d[0])}],
+      datasets: [{
+        label: 'Du',
+        data: [#{topHours.map(d => d[1])}],
+        borderColor: '#fffa',
+      },{
+        label: 'Alla',
+        data: [#{topHoursAll.map(d => d[1])}],
+        borderColor: '#fff3',
+      }],
+    }
+    const topWeekdays = {
+      labels: [#{topWeekdays.map(d => `'${d[0]}'`)}],
+      datasets: [{
+        label: 'Du',
+        data: [#{topWeekdays.map(d => d[1])}],
+        borderColor: '#fffa',
+      },{
+        label: 'Alla',
+        data: [#{topWeekdaysAll.map(d => d[1])}],
+        borderColor: '#fff3',
+      }],
+    }
+    const topHoursChart = new Chart(
+      document.getElementById('top-hours-chart'),
+      {...config, data: topHours },
+    );
+    const topWeekdaysChart = new Chart(
+      document.getElementById('top-weekdays-chart'),
+      {...config, data: topWeekdays },
+    );
+
   script(src='/js/wrapped2021.js')
