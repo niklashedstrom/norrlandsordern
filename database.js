@@ -105,6 +105,9 @@ exports.getToplistRange = async (limit, userId, range) => {
       from = new Date(d.getFullYear(), 0, 1).toISOString().substr(0,10)
       to = new Date(d.getFullYear(), 11, 31).toISOString().substr(0,10)
       break;
+    case 'wrapped2021':
+      from = '2021-01-01'
+      to = '2021-11-30'
   }
   const response = await knex
     .select('id', 'name', 'volume_sum')

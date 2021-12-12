@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const passwordGen = require('generate-password');
 const LocalStrategy = require('passport-local').Strategy;
 const db = require('./database');
+const wrapped = require('./wrapped');
 const mailer = require('./mailer');
 const helper = require('./helpers');
 
@@ -83,6 +84,7 @@ app.get('/', (req, res) => {
       allTimeToplist: allTimeToplist,
       weeklyToplist: weeklyToplist,
       percentage: helper.getPercentage(m),
+      showWrapped: !!req.user,
       ...helper.getPosition(m),
       formatNumber: helper.formatNumber,
       formatDate: helper.formatDate,
@@ -438,6 +440,8 @@ app.post('/forgot', async (req, res) => {
     res.redirect('/failure')
   }
 })
+
+app.get('/wrapped/2021', auth.autenticated, wrapped.w2021)
 
 const port = process.env.PORT || 5000
 

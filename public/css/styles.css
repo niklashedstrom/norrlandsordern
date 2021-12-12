@@ -171,3 +171,43 @@ a[disabled] {
 .user-link:hover {
   color: #444;
 }
+
+.norrlands-wrapped-popup {
+  position: fixed;
+  bottom: 0;
+  margin: 16px;
+  z-index: 2000;
+  background: linear-gradient(140deg, #0A243E 0%, #BE162F 36%, #CBA051 100%);
+  box-shadow: 3px 3px 16px 0px #0000004a;
+  color: #fff;
+  padding: 16px;
+  border-radius: 5px;
+}
+
+.norrlands-wrapped-popup .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  color: #fff;
+}
+
+.norrlands-wrapped-popup .goto {
+  font-weight: 900;
+  animation: pulse 10s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    color: #0A243E;
+  }
+  33% {
+    color: #BE162F;
+  }
+  66% {
+    color: #CBA051;
+  }
+  100% {
+    color: #0A243E;
+  }
+}

@@ -2,7 +2,6 @@ extends layout.pug
 include mixins/toplist.pug
 include mixins/log.pug
 
-
 block extrameta
   link(
     rel='stylesheet',
@@ -91,8 +90,25 @@ block content
         komma ut som vinnare även här. Mot Norrland, en burk i taget!
       hr
       p.white= "Skapad av Emil och Niklas, version " + version
+  if showWrapped
+    .norrlands-wrapped-popup
+      button.close
+        i.bi.bi-x
+      p.subheader #norrlandswrapped
+      h4 Titta tillbaka på 2021!
+      p.
+        När årets slut närmar sig kan det vara kul att reflektera över det gångna året, här
+        är din #norrlandswrapped2021!
+      a(href='/wrapped/2021')
+        button.goto.btn.btn-light.btn-lg.btn-block.mb-2 SE DIN WRAPPED 2021
 
 block scripts
+  script(type='text/javascript').
+    const popup = document.getElementsByClassName('norrlands-wrapped-popup')[0]
+    if (popup)
+      popup.getElementsByClassName('close')[0].onclick = function() {
+        popup.style.display = 'none';
+      }
   script(type='text/javascript').
     const map = L.map('map-status', {
       fullscreenControl: true
