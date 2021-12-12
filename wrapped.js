@@ -63,5 +63,5 @@ exports.w2021 = async (req, res) => {
       formatNumber: helper.formatNumber,
       formatDate: helper.formatDate,
     })
-  })
+  }).then(_ => db.userHasVistitedWrapped2021(userId))
 };

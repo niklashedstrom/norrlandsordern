@@ -84,7 +84,7 @@ app.get('/', (req, res) => {
       allTimeToplist: allTimeToplist,
       weeklyToplist: weeklyToplist,
       percentage: helper.getPercentage(m),
-      showWrapped: !!req.user,
+      showWrapped: req.user && !req.user.wrapped_2021,
       ...helper.getPosition(m),
       formatNumber: helper.formatNumber,
       formatDate: helper.formatDate,

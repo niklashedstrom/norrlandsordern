@@ -18,6 +18,10 @@ exports.addUser = async (user) => {
   return false;
 }
 
+exports.userHasVistitedWrapped2021 = async (userId) => {
+  await knex('users').where({id: userId}).update({wrapped_2021: true})
+}
+
 exports.updateUser = async (id, newData) => {
   if (newData.password) {
     const hash = await bcrypt.hash(newData.password, 10);
