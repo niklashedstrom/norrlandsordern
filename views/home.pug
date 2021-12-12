@@ -32,7 +32,10 @@ block content
         a(href='/me')
           button.btn.btn-light.btn-lg.btn-block.mb-2 Logga öl!
         a(href='/logout')
-          button.btn.btn-outline-light.btn-sm.btn-block Logga ut
+          button.btn.btn-outline-light.btn-sm.btn-block.mb-2 Logga ut
+        form(method='GET', action='/search')
+          input.form-control.mb-2(type='text', name='t', placeholder='Sök efter användare')
+          input#search-bar.btn.btn-outline-light.btn-sm.btn-block.form-control(type='submit', value='Sök')
       else
         a.mb-1(href='/login')
           button.btn.btn-light.btn-lg.btn-block.mb-2 Logga in
