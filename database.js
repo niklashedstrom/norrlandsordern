@@ -1,6 +1,4 @@
 const bcrypt = require('bcrypt')
-const knex_config = require('./knexfile');
-const knex = require('knex')(knex_config[process.env.NODE_ENV] || knex_config.development);
 
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
@@ -19,8 +17,6 @@ const DB_NAME = 'website'
 
 const users = client.db(DB_NAME).collection('users')
 const norrlands = client.db(DB_NAME).collection('norrlands')
-
-exports.knex = knex;
 
 exports.addUser = async (user) => {
   if (['name', 'username', 'password', 'email'].every(prop => user[prop])) {
