@@ -6,7 +6,7 @@ block content
   .restrict-width
     .card.m-4
       .card-body
-        h5.card-title= `#${user.id}: ${user.name} ${user.admin ? "(Admin)" : ""}`
+        h5.card-title= `#${user._id}: ${user.name} ${user.admin ? "(Admin)" : ""}`
         p.text-muted.m-0 Användarnamn
         p
           strong= user.username
@@ -14,7 +14,7 @@ block content
         p
           strong= user.email
         if me
-          a(href=`users/${user.id}/edit`)
+          a(href=`users/${user._id}/edit`)
             button.btn.btn-outline-dark Redigera
   if me
     .restrict-width
@@ -42,7 +42,7 @@ block content
         if norrlands[0]
           p.text-muted.m-0= `Senast öl (${formatDateDiff(norrlands[0].created_at, new Date())} sedan)`
           p
-            strong= `#${norrlands[0].id}: ${norrlands[0].volume} cl, ${formatDate(norrlands[0].created_at)}`
+            strong= `${norrlands[0].volume} cl, ${formatDate(norrlands[0].created_at)}`
         p.text-muted.m-0 Totalt antal
         p
           strong= `${formatNumber(norrlands.map(item => item.volume).reduce((a,b) => a+b, 0)/33, 0)} burkar`
@@ -63,7 +63,7 @@ block content
               th= item.volume
               th= formatDate(item.created_at)
   if lastLogged
-    #status.alert.alert-success.fixed-bottom.m-3= `Lyckad logg av ${lastLogged} totala ölen! `
+    #status.alert.alert-success.fixed-bottom.m-3= `Lyckad logg av ölen med id ${lastLogged}! `
       //button.ml-2.btn.btn-outline-dark Ångra
 
 

@@ -20,5 +20,5 @@ mixin toplist(t)
           tr
             td= item.index
             td
-              a.user-link(href=`/users/${item.id}`)= item.name
+              a.user-link(href=`/users/${item.user._id}`)= item.user.name
             td= formatNumber(item.volume_sum/33*0.066, 2)

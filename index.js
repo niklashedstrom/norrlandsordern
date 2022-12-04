@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const KnexSessionStore = require('connect-session-knex')(session);
+const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const helmet = require('helmet');
 const passwordGen = require('generate-password');
@@ -21,7 +22,7 @@ const auth = {
     }
   },
   adminOrUser: (req, res, next) => {
-    if (req.user.admin || req.user.id == req.params.id) {
+    if (req.user.admin || req.user._id == req.params.id) {
       next()
     } else {
       res.sendStatus(401)
@@ -39,7 +40,7 @@ passport.use(new LocalStrategy((username, password, done) => {
 }))
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user._id);
 });
 
 passport.deserializeUser((id, done) => {
@@ -54,7 +55,14 @@ app.set('view engine', 'pug');
 
 app.use(express.static('public'));
 app.use(session({
-  store: new KnexSessionStore({knex: db.knex}),
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    dbName: 'website',
+    collectionName: 'sessions',
+    ttl:24 * 60 * 60 * 1000,
+    autoRemove: 'interval',
+    autoRemoveInterval: 24 * 60,
+  }),
   secret: process.env.SESSION_SECRET || 'cats',
   resave: false,
   saveUninitialized: true,
@@ -72,7 +80,7 @@ app.use(helmet({
 
 app.get('/', (req, res) => {
   const toplistSize = 10;
-  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?.id), db.getUserCount(), db.getToplistRange(toplistSize, req.user?.id, 'week')]).then(values => {
+  Promise.all([db.getTotalNorrlands(), db.getLatestNorrlands(10), db.getToplist(toplistSize, req.user?._id), db.getUserCount(), db.getToplistRange(toplistSize, req.user?._id, 'week')]).then(values => {
     const [cl, latestNorrlands, allTimeToplist, userCount, weeklyToplist ] = values;
     const m = (cl/33*0.066).toFixed(2);
 
@@ -99,18 +107,19 @@ app.get('/statistics', auth.autenticated, async (req, res) => {
   Promise.all([
     db.getTotalNorrlands(),
     db.getAllUsers(),
-    db.getToplist(toplistSize, req.user?.id),
-    db.getToplistRange(toplistSize, req.user?.id, 'week'),
-    db.getToplistRange(toplistSize, req.user?.id, 'month'),
-    db.getToplistRange(toplistSize, req.user?.id, 'year'),
+    db.getToplist(toplistSize, req.user?._id),
+    db.getToplistRange(toplistSize, req.user?._id, 'week'),
+    db.getToplistRange(toplistSize, req.user?._id, 'month'),
+    db.getToplistRange(toplistSize, req.user?._id, 'year'),
     db.getLatestNorrlands(10),
     db.getAccumulatedNorrlands()]).then(values => {
     const [ cl, users, allTimeToplist, weeklyToplist, monthlyToplist, yearlyToplist, latestNorrlands, accumulated ] = values;
+    console.log(weeklyToplist)
     const m = (cl/33*0.066).toFixed(2);
     res.render('statistics', {
       volume: cl,
       totalUsers: users.length,
-      latestUsers: users.reverse().slice(0, 10),
+      latestUsers: users.sort((a, b) => (a.joined_at) ? b.joined_at - a.joined_at : b.user_id - a.user_id).slice(0, 10),
       latestNorrlands: latestNorrlands.map(n => ({...n, diff: (new Date()) - n.created_at})),
       norrlandsPerUser: helper.getNorrlandsPerUser(users.length),
       timeToSuccess: helper.getYearsToSuccess(cl),
@@ -132,7 +141,7 @@ app.get('/statistics/toplist-all-time', auth.autenticated, async (req, res) => {
 
   if (!size) res.redirect('/statistics/toplist-all-time?size=25')
 
-  Promise.all([db.getToplist(size, req.user?.id)]).then(values => {
+  Promise.all([db.getToplist(size, req.user?._id)]).then(values => {
     const [ toplist ] = values;
     res.render('toplist-all-time', {
       backUrl: helper.backUrl(req.url),
@@ -148,7 +157,7 @@ app.get('/statistics/toplist-weekly', auth.autenticated, async (req, res) => {
 
   if (!size) res.redirect('/statistics/toplist-weekly?size=25')
 
-  Promise.all([db.getToplistRange(size, req.user?.id, 'week')]).then(values => {
+  Promise.all([db.getToplistRange(size, req.user?._id, 'week')]).then(values => {
     const [ toplist ] = values;
     res.render('toplist-range', {
       backUrl: helper.backUrl(req.url),
@@ -165,7 +174,7 @@ app.get('/statistics/toplist-monthly', auth.autenticated, async (req, res) => {
 
   if (!size) res.redirect('/statistics/toplist-monthly?size=25')
 
-  Promise.all([db.getToplistRange(size, req.user?.id, 'month')]).then(values => {
+  Promise.all([db.getToplistRange(size, req.user?._id, 'month')]).then(values => {
     const [ toplist ] = values;
     res.render('toplist-range', {
       backUrl: helper.backUrl(req.url),
@@ -182,7 +191,7 @@ app.get('/statistics/toplist-yearly', auth.autenticated, async (req, res) => {
 
   if (!size) res.redirect('/statistics/toplist-yearly?size=25')
 
-  Promise.all([db.getToplistRange(size, req.user?.id, 'year')]).then(values => {
+  Promise.all([db.getToplistRange(size, req.user?._id, 'year')]).then(values => {
     const [ toplist ] = values;
     res.render('toplist-range', {
       backUrl: helper.backUrl(req.url),
@@ -214,7 +223,7 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
   try {
     const norrlands = await db.getNorrlands(req.params.id);
     const user = await db.getUser(req.params.id);
-    const self = user.id === req.user.id
+    const self = user._id.equals(req.user._id)
 
     if(self) {
       res.redirect('/me')
@@ -226,8 +235,6 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
         formatNumber: helper.formatNumber,
         formatDate: helper.formatDate,
         formatDateDiff: helper.formatDateDiff,
-        lastLogged: req.query.id,
-        lastLoggedVolume: norrlands[0].volume,
       });
     }
   } catch (e) {
@@ -278,7 +285,7 @@ app.post('/users/:id/edit', auth.autenticated, auth.adminOrUser, async (req, res
     if (!req.user.admin && changedData.admin)
       return res.render('editUser', {...pugData, status: {type: 'warning', message: 'Bara en admin får ändra adminstatus, inget sparades.'}})
 
-    await db.updateUser(user.id, changedData)
+    await db.updateUser(user._id, changedData)
     return res.render('editUser', {...pugData, status: {type: 'success', message: 'Informationen är uppdaterad!'}})
 
   } catch (e) {
@@ -288,8 +295,9 @@ app.post('/users/:id/edit', auth.autenticated, auth.adminOrUser, async (req, res
 })
 
 app.get('/me', auth.autenticated, (req, res) => {
-  db.getNorrlands(req.user.id)
+  db.getNorrlands(req.user._id)
     .then(norrlands => {
+      console.log(norrlands.map(item => item.volume))//.reduce((a,b) => a+b, 0)/33)
       res.render('user', {
         user: req.user,
         me: true,
@@ -351,7 +359,7 @@ app.get('/norrlands', auth.autenticated, (req, res) => {
 
   db.getNorrlandsPage(page, pageSize).then((norrlands) => {
     res.render('norrlandsList', {
-      norrlands: norrlands.map(n => ({...n, link: `/norrlands/${n.id}`})),
+      norrlands: norrlands.map(n => ({...n, link: `/norrlands/${n._id}`})),
       formatDate: helper.formatDate,
       page: page,
       pageSize: pageSize,
@@ -412,8 +420,8 @@ app.post('/norrlands/:id', auth.autenticated, (req, res) => {
 app.post('/norrlands', auth.autenticated, (req, res) => {
   const { volume } = req.body;
   if (volume) {
-    db.addNorrlands(req.user.id, volume).then((response) => {
-      res.redirect(`/me?id=${response[0]}`)
+    db.addNorrlands(req.user._id, volume).then((response) => {
+      res.redirect(`/me?id=${response}`)
     })
   }
 })
@@ -432,7 +440,7 @@ app.post('/forgot', async (req, res) => {
     if (users.length == 0) return res.redirect(`forgot?email=${email}`)
 
     const newUsers = users.map(r => ({...r, password: passwordGen.generate({length: 10, numbers: true})}))
-    await Promise.all(newUsers.map(user => db.updateUser(user.id, {password: user.password})))
+    await Promise.all(newUsers.map(user => db.updateUser(user._id, {password: user.password})))
 
     const text = 'Här kommer ditt återställda lösenord:\n\n' + newUsers.map(user => `Användarnamn: ${user.username}, lösenord: ${user.password}`).join('\n') + '\n\nMot norrlands, en burk i taget!\nNorrlandsordern';
     await mailer.send(email, 'Återställt lösenord', text)

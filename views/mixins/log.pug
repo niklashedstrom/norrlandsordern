@@ -8,5 +8,5 @@ mixin log(l)
       each item in l
         tr
           td
-            a.user-link(href=`/users/${item.id}`)= item.name
+            a.user-link(href=`/users/${item.user._id}`)= item.user.name
           td= formatDate(item.created_at)
