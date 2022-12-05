@@ -43,7 +43,7 @@ exports.formatDate = (date) => {
 }
 
 exports.formatTime = (date) => {
-  date = new Date(date.toLocaseString('en-US', {timeZone: 'Europe/Stockholm'}))
+  date = new Date(date.toLocaleString('en-US', {timeZone: 'Europe/Stockholm'}))
   const pad = (number) => ('000' + number).slice(-2)
   const hour = pad(date.getHours());
   const minute = pad(date.getMinutes());
