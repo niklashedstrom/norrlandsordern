@@ -303,9 +303,10 @@ app.get('/me', auth.autenticated, (req, res) => {
         me: true,
         norrlands: norrlands,
         formatNumber: helper.formatNumber,
+        formatTime: helper.formatTime,
         formatDate: helper.formatDate,
         formatDateDiff: helper.formatDateDiff,
-        lastLogged: req.query.id,
+        lastLogged: (req.query.time) ? new Date(req.query.time) : null,
         lastLoggedVolume: (norrlands.length == 0) ? 33 : norrlands[0].volume,
       });
     })
@@ -421,7 +422,7 @@ app.post('/norrlands', auth.autenticated, (req, res) => {
   const { volume } = req.body;
   if (volume) {
     db.addNorrlands(req.user._id, volume).then((response) => {
-      res.redirect(`/me?id=${response}`)
+      res.redirect(`/me?time=${response.getTimestamp()}`)
     })
   }
 })

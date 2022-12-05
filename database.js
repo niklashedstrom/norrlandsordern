@@ -209,7 +209,6 @@ exports.addNorrlands = async (userId, volume) => {
       created_at: new Date()
     })).insertedId;
   }
-  return false;
 }
 
 exports.getNorrlands = async (userId) => {

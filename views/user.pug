@@ -63,7 +63,7 @@ block content
               th= item.volume
               th= formatDate(item.created_at)
   if lastLogged
-    #status.alert.alert-success.fixed-bottom.m-3= `Lyckad logg av ölen med id ${lastLogged}! `
+    #status.alert.alert-success.fixed-bottom.m-3= `Lyckad logg ${formatTime(lastLogged)}! `
       //button.ml-2.btn.btn-outline-dark Ångra
 
 
