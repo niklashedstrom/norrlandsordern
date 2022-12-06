@@ -447,7 +447,7 @@ app.post('/forgot', async (req, res) => {
 
     await Promise.all(newUsers.map(user => db.updateUser(user._id, {password: user.password})))
 
-    res.redirect(`/signin`)
+    res.redirect(`/login`)
   } catch (e) {
     console.log(e)
     res.redirect('/failure')
