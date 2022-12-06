@@ -1,23 +1,24 @@
-const nodemailer = require('nodemailer');
+require('dotenv').config()
+const { EmailClient } = require('@azure/communication-email');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'norrlandsordern@gmail.com',
-    pass: process.env.EMAIL_PASSWORD,
-  },
-})
+const client = new EmailClient(process.env.ACS_CONNECTION_STRING);
 
-exports.send = (to, subject, content) => {
-  const mailOptions = {
-    from: 'norrlandsordern@gmail.com',
-    to: to,
-    subject: subject,
-    text: content,
+exports.send = async (toEmail, toName, subject, content) => {
+  const emailMessage = {
+    sender: "DoNotReply@8874a356-3ce5-4513-b2a3-cbba35fb1a2b.azurecomm.net",
+    content: {
+      subject: subject,
+      plainText: content,
+    },
+    recipients: {
+      to: [
+        {
+          email: toEmail,
+          displayName: toName,
+        },
+      ],
+    },
   };
-
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) console.log(err)
-    else console.log('Email sent')
-  });
+  const response = await client.send(emailMessage);
+  console.log(response)
 }

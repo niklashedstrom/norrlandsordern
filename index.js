@@ -441,13 +441,15 @@ app.post('/forgot', async (req, res) => {
     if (users.length == 0) return res.redirect(`forgot?email=${email}`)
 
     const newUsers = users.map(r => ({...r, password: passwordGen.generate({length: 10, numbers: true})}))
-    await Promise.all(newUsers.map(user => db.updateUser(user._id, {password: user.password})))
 
     const text = 'Här kommer ditt återställda lösenord:\n\n' + newUsers.map(user => `Användarnamn: ${user.username}, lösenord: ${user.password}`).join('\n') + '\n\nMot norrlands, en burk i taget!\nNorrlandsordern';
-    await mailer.send(email, 'Återställt lösenord', text)
+    await mailer.send(email, users[0].name, 'Återställt lösenord', text)
 
-    res.redirect(`forgot?email=${email}`)
+    await Promise.all(newUsers.map(user => db.updateUser(user._id, {password: user.password})))
+
+    res.redirect(`/signin`)
   } catch (e) {
+    console.log(e)
     res.redirect('/failure')
   }
 })
