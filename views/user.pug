@@ -6,7 +6,15 @@ block content
   .restrict-width
     .card.m-4
       .card-body
-        h5.card-title= `#${user._id}: ${user.name} ${user.admin ? "(Admin)" : ""}`
+        h5.card-title= user.name
+        if user.badge == 'star-gold'
+          p
+            em Den här användaren har donerat #[strong minst 200 kr] till driften av hemsidan, tack!
+            img.user-badge(src='/images/star-gold.svg', alt='Guldstjärna')
+        if user.badge == 'star-silver'
+          p
+            em Den här användaren har donerat till driften av hemsidan, tack!
+            img.user-badge(src='/images/star-silver.svg', alt='Silverstjärna')
         p.text-muted.m-0 Användarnamn
         p
           strong= user.username

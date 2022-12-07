@@ -9,4 +9,8 @@ mixin log(l)
         tr
           td
             a.user-link(href=`/users/${item.user._id}`)= item.user.name
+            if item.user.badge == 'star-gold'
+                img.user-badge(src='/images/star-gold.svg', alt='Guldstjärna')
+            if item.user.badge == 'star-silver'
+                img.user-badge(src='/images/star-silver.svg', alt='Silverstjärna')
           td= formatDate(item.created_at)
