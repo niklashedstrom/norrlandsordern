@@ -69,7 +69,7 @@ exports.getUserCount = async () => {
 }
 
 formatToplist = (res, limit, userId) => {
-  const toplist = res.slice(0,limit).map((p, i) => ({...p, index: i + 1, self: userId == p._id}))
+  const toplist = res.slice(0,limit).map((p, i) => ({...p, index: i + 1, self: new ObjectId(userId).equals(p.user._id)}))
 
   if (!toplist.some(p => p.self))
     res.forEach((p, i) => { if (p._id == userId) toplist.push({...p, index: i + 1, self: true})})
