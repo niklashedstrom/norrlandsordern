@@ -114,7 +114,6 @@ app.get('/statistics', auth.autenticated, async (req, res) => {
     db.getLatestNorrlands(10),
     db.getAccumulatedNorrlands()]).then(values => {
     const [ cl, users, allTimeToplist, weeklyToplist, monthlyToplist, yearlyToplist, latestNorrlands, accumulated ] = values;
-    console.log(weeklyToplist)
     const m = (cl/33*0.066).toFixed(2);
     res.render('statistics', {
       volume: cl,
@@ -297,7 +296,6 @@ app.post('/users/:id/edit', auth.autenticated, auth.adminOrUser, async (req, res
 app.get('/me', auth.autenticated, (req, res) => {
   db.getNorrlands(req.user._id)
     .then(norrlands => {
-      console.log(norrlands.map(item => item.volume))//.reduce((a,b) => a+b, 0)/33)
       res.render('user', {
         user: req.user,
         me: true,
