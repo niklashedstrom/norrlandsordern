@@ -202,7 +202,7 @@ exports.checkUsername = async (username) => {
 
 exports.addNorrlands = async (userId, volume) => {
   if (userId && volume) {
-    cache.del('toplist', 'toplist:week', 'toplist:month', 'toplist:year')
+    cache.del(['toplist', 'toplist:week', 'toplist:month', 'toplist:year'])
     return (await norrlands.insertOne({
       user_id: userId,
       volume: new Long(volume),

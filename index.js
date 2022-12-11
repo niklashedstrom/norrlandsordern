@@ -138,7 +138,7 @@ app.get('/statistics', auth.autenticated, async (req, res) => {
 app.get('/statistics/toplist-all-time', auth.autenticated, async (req, res) => {
   const size = parseInt(req.query.size)
 
-  if (!size) res.redirect('/statistics/toplist-all-time?size=25')
+  if (!size) return res.redirect('/statistics/toplist-all-time?size=25')
 
   Promise.all([db.getToplist(size, req.user?._id)]).then(values => {
     const [ toplist ] = values;
@@ -154,7 +154,7 @@ app.get('/statistics/toplist-all-time', auth.autenticated, async (req, res) => {
 app.get('/statistics/toplist-weekly', auth.autenticated, async (req, res) => {
   const size = parseInt(req.query.size)
 
-  if (!size) res.redirect('/statistics/toplist-weekly?size=25')
+  if (!size) return res.redirect('/statistics/toplist-weekly?size=25')
 
   Promise.all([db.getToplistRange(size, req.user?._id, 'week')]).then(values => {
     const [ toplist ] = values;
@@ -171,7 +171,7 @@ app.get('/statistics/toplist-weekly', auth.autenticated, async (req, res) => {
 app.get('/statistics/toplist-monthly', auth.autenticated, async (req, res) => {
   const size = parseInt(req.query.size)
 
-  if (!size) res.redirect('/statistics/toplist-monthly?size=25')
+  if (!size) return res.redirect('/statistics/toplist-monthly?size=25')
 
   Promise.all([db.getToplistRange(size, req.user?._id, 'month')]).then(values => {
     const [ toplist ] = values;
@@ -188,7 +188,7 @@ app.get('/statistics/toplist-monthly', auth.autenticated, async (req, res) => {
 app.get('/statistics/toplist-yearly', auth.autenticated, async (req, res) => {
   const size = parseInt(req.query.size)
 
-  if (!size) res.redirect('/statistics/toplist-yearly?size=25')
+  if (!size) return res.redirect('/statistics/toplist-yearly?size=25')
 
   Promise.all([db.getToplistRange(size, req.user?._id, 'year')]).then(values => {
     const [ toplist ] = values;
@@ -205,7 +205,7 @@ app.get('/statistics/toplist-yearly', auth.autenticated, async (req, res) => {
 app.get('/statistics/log', auth.autenticated, async (req, res) => {
   const size = parseInt(req.query.size)
 
-  if (!size) res.redirect('/statistics/log?size=25')
+  if (!size) return res.redirect('/statistics/log?size=25')
 
   Promise.all([db.getLatestNorrlands(size)]).then(values => {
     const [ latestNorrlands ] = values;
@@ -225,7 +225,7 @@ app.get('/users/:id', auth.autenticated, async (req, res) => {
     const self = user._id.equals(req.user._id)
 
     if(self) {
-      res.redirect('/me')
+      return res.redirect('/me')
     } else {
       return res.render('user', {
         user: user,
