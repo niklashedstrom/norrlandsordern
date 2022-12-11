@@ -1,6 +1,9 @@
 name: JavaScript CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 env:
   AZURE_WEBAPP_NAME: norrlandsordern
