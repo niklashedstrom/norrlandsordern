@@ -197,6 +197,12 @@ a[disabled] {
   animation: pulse 10s infinite;
 }
 
+.user-badge {
+    width: 16px !important;
+    margin: 0 0 0 8px !important;
+    display: inline !important;
+}
+
 @keyframes pulse {
   0% {
     color: #0A243E;

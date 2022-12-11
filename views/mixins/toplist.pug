@@ -12,13 +12,21 @@ mixin toplist(t)
             td
               b= item.index
             td
-              a.user-link(href=`/users/${item.id}`)
-                b= item.name
+              a.user-link(href=`/users/${item.user._id}`)
+                b= item.user.name
+              if item.user.badge == 'star-gold'
+                img.user-badge(src='/images/star-gold.svg', alt='Guldstjärna')
+              if item.user.badge == 'star-silver'
+                img.user-badge(src='/images/star-silver.svg', alt='Silverstjärna')
             td
               b= formatNumber(item.volume_sum/33*0.066, 2)
         else
           tr
             td= item.index
             td
-              a.user-link(href=`/users/${item.id}`)= item.name
+              a.user-link(href=`/users/${item.user._id}`)= item.user.name
+              if item.user.badge == 'star-gold'
+                img.user-badge(src='/images/star-gold.svg', alt='Guldstjärna')
+              if item.user.badge == 'star-silver'
+                img.user-badge(src='/images/star-silver.svg', alt='Silverstjärna')
             td= formatNumber(item.volume_sum/33*0.066, 2)

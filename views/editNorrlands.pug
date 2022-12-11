@@ -15,10 +15,10 @@ block content
           input#created_at.form-control(required, disabled, name='created_at', value=formatDate(norrlands.created_at))
         .form-group
           label(for='username') Användarnamn
-          input#username.form-control(required, disabled, name='username', value=norrlands.username)
+          input#username.form-control(required, disabled, name='username', value=norrlands.user.username)
         .form-group
           label(for='name') Namn
-          input#name.form-control(required, disabled, name='name', value=norrlands.name)
+          input#name.form-control(required, disabled, name='name', value=norrlands.user.name)
         hr
         .row
           .col-12

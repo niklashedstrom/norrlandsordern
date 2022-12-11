@@ -92,8 +92,8 @@ const normalize = (l) => {
 }
 
 exports.w2021 = async (req, res) => {
-  const userId = req.user?.id;
-  Promise.all([db.getUserCount(), db.getToplistRange(500, userId, 'wrapped2021'), db.getAllNorrlands()]).then(values => {
+  const userId = req.user?._id;
+  Promise.all([db.getUserCount(), db.getToplistRange(500, userId, 'wrapped2021'), db.getAllNorrlands(new Date("2021-01-01"), new Date("2022-01-01"))]).then(values => {
     const [ nbrOfUsers, toplist, norrlands ] = values;
     const self = toplist.find(r => r.self);
     const norrlands2021 = norrlands.filter(n => n.created_at.toISOString().startsWith('2021')).reverse();

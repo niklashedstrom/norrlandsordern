@@ -42,6 +42,15 @@ exports.formatDate = (date) => {
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`
 }
 
+exports.formatTime = (date) => {
+  date = new Date(date.toLocaleString('en-US', {timeZone: 'Europe/Stockholm'}))
+  const pad = (number) => ('000' + number).slice(-2)
+  const hour = pad(date.getHours());
+  const minute = pad(date.getMinutes());
+  const second = pad(date.getSeconds());
+  return `${hour}:${minute}:${second}`
+}
+
 exports.getYearsToSuccess = (cl) => {
   const diff = Date.now() - START_DATE;
   const percentage = cl / TOTAL_CL;

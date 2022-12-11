@@ -152,10 +152,8 @@ block content
       h4.red Senaste medlemmar
       each user in latestUsers
         .row
-          .col-2.text-right
-            p.text-muted= user.id
           .col-10
-            a.user-link(href=`/users/${user.id}`)
+            a.user-link(href=`/users/${user._id}`)
               p= user.name
   #toplists.p-4
     .restrict-width
